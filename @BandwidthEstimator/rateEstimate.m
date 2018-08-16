@@ -10,8 +10,8 @@ function rate = rateEstimate(self, varargin)
     %
 
   p = inputParser;
-  p.addParameter('kernel', SomeSortofGaussian);
-  p.addRequired('bandwidth', self.Fs);
+  p.addParameter('kernel', @self.hanning);
+  p.addParameter('bandwidth', self.Fs);
   p.parse(varargin{:});
 
   % define important variables
@@ -23,7 +23,7 @@ function rate = rateEstimate(self, varargin)
 
   for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
     for step = 1:length(nSteps) % for each time step
-      rate(step, recording) = normalization * dt * sum(kernel(step - nSteps, bandwidth) * self.spikeTrain(:, recording));
+      rate(step, recording) = normalization * dt * sum(kernel(step - nSteps, bandwidth, true) * self.spikeTrain(:, recording));
     end
   end
 
