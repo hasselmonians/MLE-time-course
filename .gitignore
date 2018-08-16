@@ -102,3 +102,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# matlab stuff
+.mex
+.mexa64
+.mat
+
+# pictures/files
+.png
+.pdf
