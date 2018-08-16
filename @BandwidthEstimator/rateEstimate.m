@@ -12,6 +12,7 @@ function rate = rateEstimate(self, varargin)
   p = inputParser;
   p.addParameter('kernel', @self.hanning);
   p.addParameter('bandwidth', self.Fs);
+  p.addParameter('parallel', false)
   p.parse(varargin{:});
   kernel = p.Results.kernel;
   bandwidth = p.Results.bandwidth;
@@ -23,17 +24,33 @@ function rate = rateEstimate(self, varargin)
 
   [~, normalization] = kernel(1, bandwidth);
 
-  for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
-    parfor step = 1:length(steps) % for each time step in the rate function
-      % textbar(step, length(steps));
-      val = 0;
-      for ii = 1:length(steps) % for each time step in the summand
-        if self.spikeTrain(ii, recording) > 0
-          val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii, recording);
+switch parallel
+  case true
+    for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
+      for step = 1:length(steps) % for each time step in the rate function
+        % textbar(step, length(steps));
+        val = 0;
+        for ii = 1:length(steps) % for each time step in the summand
+          if self.spikeTrain(ii, recording) > 0
+            val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii, recording);
+          end
         end
+        rate(step, recording) = dt / normalization * val;
       end
-      rate(step, recording) = dt / normalization * val;
     end
-  end
+  case false
+    for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
+      parfor step = 1:length(steps) % for each time step in the rate function
+        % textbar(step, length(steps));
+        val = 0;
+        for ii = 1:length(steps) % for each time step in the summand
+          if self.spikeTrain(ii, recording) > 0
+            val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii, recording);
+          end
+        end
+        rate(step, recording) = dt / normalization * val;
+      end
+    end
+end
 
 end % end function
