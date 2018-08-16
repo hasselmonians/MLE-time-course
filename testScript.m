@@ -9,6 +9,6 @@ root.cel = [9, 3];
 best = BandwidthEstimator('Fs', root.fs_video, 'time', root.ts(end), 'spikeTrain', root.cel_i{1});
 
 % rate estimate
-rate = best.rateEstimate('bandwidth', 125);
+rate = best.rateEstimate('bandwidth', 125, 'parallel', true);
 figure
 plot(rate / max(vectorise(rate)));
