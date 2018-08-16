@@ -13,6 +13,8 @@ function rate = rateEstimate(self, varargin)
   p.addParameter('kernel', @self.hanning);
   p.addParameter('bandwidth', self.Fs);
   p.parse(varargin{:});
+  kernel = p.Results.kernel;
+  bandwidth = p.Results.bandwidth;
 
   % define important variables
   dt      = 1/self.Fs; % time step
@@ -23,6 +25,7 @@ function rate = rateEstimate(self, varargin)
 
   for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
     for step = 1:length(nSteps) % for each time step
+      textbar(step, length(nSteps));
       rate(step, recording) = normalization * dt * sum(kernel(step - nSteps, bandwidth, true) * self.spikeTrain(:, recording));
     end
   end

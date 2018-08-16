@@ -29,7 +29,7 @@ classdef BandwidthEstimator
       % process the spikeTrain
       % spikeTrain should be nSteps x nRecordings
       if size(spikeTrain, 2) > size(spikeTrain, 1)
-        spikeTrain = spikeTrain;
+        spikeTrain = spikeTrain';
       end
 
       % spikeTrain should be a logical array (1 == spike)
