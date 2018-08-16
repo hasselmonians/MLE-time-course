@@ -64,4 +64,10 @@ classdef BandwidthEstimator
 
   end % methods
 
+  methods (static)
+
+    [value, normalization] = hanning(x, bandwidth, notch)
+
+  end % static methods
+
 end % classdef
