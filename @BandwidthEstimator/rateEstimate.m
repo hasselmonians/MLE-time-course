@@ -19,7 +19,7 @@ function rate = rateEstimate(self, varargin)
 
   % define important variables
   dt      = 1/self.Fs; % time step
-  steps   = 1:length(self.spikeTrain);
+  nSteps  = length(self.spikeTrain);
   rate    = NaN(length(steps), size(self.spikeTrain, 2));
 
   [~, normalization] = kernel(1, bandwidth);
@@ -27,7 +27,7 @@ function rate = rateEstimate(self, varargin)
 switch parallel
   case true
     for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
-      for step = 1:length(steps) % for each time step in the rate function
+      for step = 1:nSteps % for each time step in the rate function
         % textbar(step, length(steps));
         val = 0;
         for ii = 1:length(steps) % for each time step in the summand
