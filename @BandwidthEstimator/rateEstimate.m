@@ -16,11 +16,12 @@ function rate = rateEstimate(self, varargin)
   p.parse(varargin{:});
   kernel = p.Results.kernel;
   bandwidth = p.Results.bandwidth;
+  parallel = p.Results.parallel;
 
   % define important variables
   dt      = 1/self.Fs; % time step
   nSteps  = length(self.spikeTrain);
-  rate    = NaN(length(steps), size(self.spikeTrain, 2));
+  rate    = NaN(nSteps, size(self.spikeTrain, 2));
 
   [~, normalization] = kernel(1, bandwidth);
 
@@ -28,9 +29,9 @@ switch parallel
   case true
     for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
       for step = 1:nSteps % for each time step in the rate function
-        textbar(step, length(nSteps));
+        textbar(step, nSteps);
         val = 0;
-        for ii = 1:length(nSteps) % for each time step in the summand
+        for ii = 1:nSteps % for each time step in the summand
           if self.spikeTrain(ii, recording) > 0
             val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii, recording);
           end
@@ -40,10 +41,10 @@ switch parallel
     end
   case false
     for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
-      parfor step = 1:length(nSteps) % for each time step in the rate function
-        % textbar(step, length(nSteps));
+      parfor step = 1:nSteps % for each time step in the rate function
+        % textbar(step, nSteps);
         val = 0;
-        for ii = 1:length(nSteps) % for each time step in the summand
+        for ii = 1:nSteps % for each time step in the summand
           if self.spikeTrain(ii, recording) > 0
             val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii, recording);
           end
