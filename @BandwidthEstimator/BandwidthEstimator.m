@@ -4,17 +4,24 @@ classdef BandwidthEstimator
 
   properties
 
-    Fs % sample frequency in Hz
-    spikeTrain % spike train as a binary series (logicals)
+    Fs % double, sample frequency in Hz
+    time % 2x1 double, start and stop time in s
+    spikeTrain % matrix of logicals, spike train as a binary series
 
   end % properties
 
   methods
 
     % constructor
-    function obj = BandwidthEstimator(Fs, spikeTrain)
-      assert(isnumeric(Fs), 'Sample frequency must be numeric')
-      assert(isscalar(Fs), 'Sample frequency must be scalar')
+    function obj = BandwidthEstimator(varargin)
+
+      % use input parser to add values to the class
+      p = inputParser;
+      p.addParameter('Fs', 20e3, @(x) assert(isnumeric(x) && iscalar(x) && (x > 0), 'Sample frequency must be positive, scalar, and numeric'));
+      p.addParameter('spikeTrain', 0);
+      p.addParameter('time', 0, @(x) assert(isnumeric(x) && (x > 0), 'Time must be positive and numeric'));
+      % parse the input arguments
+      p.parse(varargin{:});
 
       % process the spikeTrain
       % spikeTrain should be nSteps x nRecordings
@@ -45,6 +52,14 @@ classdef BandwidthEstimator
         end
         obj.spikeTrain = logical(spikeTimes);
       end
+
+      % process time
+      if iscalar(time)
+        time = [1/Fs, time];
+      end
+
+      obj.time = time;
+
     end % constructor
 
   end % methods
