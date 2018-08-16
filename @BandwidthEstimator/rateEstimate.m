@@ -28,9 +28,9 @@ switch parallel
   case true
     for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
       for step = 1:nSteps % for each time step in the rate function
-        % textbar(step, length(steps));
+        textbar(step, length(nSteps));
         val = 0;
-        for ii = 1:length(steps) % for each time step in the summand
+        for ii = 1:length(nSteps) % for each time step in the summand
           if self.spikeTrain(ii, recording) > 0
             val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii, recording);
           end
@@ -40,10 +40,10 @@ switch parallel
     end
   case false
     for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
-      parfor step = 1:length(steps) % for each time step in the rate function
-        % textbar(step, length(steps));
+      parfor step = 1:length(nSteps) % for each time step in the rate function
+        % textbar(step, length(nSteps));
         val = 0;
-        for ii = 1:length(steps) % for each time step in the summand
+        for ii = 1:length(nSteps) % for each time step in the summand
           if self.spikeTrain(ii, recording) > 0
             val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii, recording);
           end
