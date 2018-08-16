@@ -17,11 +17,14 @@ classdef BandwidthEstimator
 
       % use input parser to add values to the class
       p = inputParser;
-      p.addParameter('Fs', 20e3, @(x) assert(isnumeric(x) && iscalar(x) && (x > 0), 'Sample frequency must be positive, scalar, and numeric'));
-      p.addParameter('spikeTrain', 0);
+      p.addParameter('Fs', 20e3, @(x) assert(isnumeric(x) && isscalar(x) && (x > 0), 'Sample frequency must be positive, scalar, and numeric'));
+      p.addParameter('spikeTrain', logical(0));
       p.addParameter('time', 0, @(x) assert(isnumeric(x) && (x > 0), 'Time must be positive and numeric'));
       % parse the input arguments
       p.parse(varargin{:});
+      Fs          = p.Results.Fs;
+      spikeTrain  = p.Results.spikeTrain;
+      time        = p.Results.time;
 
       % process the spikeTrain
       % spikeTrain should be nSteps x nRecordings
@@ -54,17 +57,17 @@ classdef BandwidthEstimator
       end
 
       % process time
-      if iscalar(time)
+      if isscalar(time)
         time = [1/Fs, time];
       end
-
-      obj.time = time;
+      obj.Fs    = Fs;
+      obj.time  = time;
 
     end % constructor
 
   end % methods
 
-  methods (static)
+  methods (Static)
 
     [value, normalization] = hanning(x, bandwidth, notch)
 
