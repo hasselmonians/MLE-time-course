@@ -10,18 +10,13 @@ function like = CVlogLikelihood(self, rate)
     % like: scalar double, the log-likelihood of the bandwidth parameter
     % if the spike train is a matrix, then the likelihood is a vector
 
-  % outputs
-  like    = zeros(size(self.spikeTrain, 2), 1);
-
   % compute the log-likelihood
   nSteps  = length(self.spikeTrain);
   dt      = self.time(2) / nSteps;
 
-  for recording = 1:size(self.spikeTrain, 2)
-    val = 0;
-    for step = 1:length(nSteps)
-      val = val + self.spikeTrain(step, recording) * log(rate(step, recording) * dt) - rate(step, recording) * dt;
-    end
-    like(recording) = val;
+  like = 0;
+  for step = 1:length(nSteps)
+    like = like + self.spikeTrain(step, recording) * log(rate(step, recording) * dt) - rate(step, recording) * dt;
   end
-end
+
+end % function
