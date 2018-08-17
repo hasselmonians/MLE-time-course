@@ -28,3 +28,12 @@ end
 % add an output file
 fileID = fopen('cluster/output.csv', 'w');
 fclose(fileID);
+
+% add a qsub file
+fileID = fopen('cluster/batchfile.sh', 'w');
+log = '/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster/log';
+err = '/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster/err';
+for ii = 1:length(filename)
+  fprintf(fileID, ['qsub -o ' log ' -e ' err ' -P ' 'hasselmogrp ' './batch-' num2str(ii) '\n']);
+end
+fclose(fileID);
