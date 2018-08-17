@@ -23,35 +23,31 @@ function rate = rateEstimate(self, varargin)
   % define important variables
   dt      = 1/self.Fs; % time step
   nSteps  = length(self.spikeTrain);
-  rate    = NaN(nSteps, size(self.spikeTrain, 2));
+  rate    = NaN(nSteps, 1);
 
   [~, normalization] = kernel(1, bandwidth);
 
   if parallel
-    for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
-      parfor step = 1:nSteps % for each time step in the rate function
-        textbar(step, nSteps);
-        val = 0;
-        for ii = 1:nSteps % for each time step in the summand
-          if self.spikeTrain(ii, recording) > 0
-            val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii, recording);
-          end
+    parfor step = 1:nSteps % for each time step in the rate function
+      % textbar(step, nSteps);
+      val = 0;
+      for ii = 1:nSteps % for each time step in the summand
+        if self.spikeTrain(ii) > 0
+          val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii);
         end
-        rate(step, recording) = dt / normalization * val;
       end
+      rate(step) = dt / normalization * val;
     end
   else
-    for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
-      for step = 1:nSteps % for each time step in the rate function
-        % textbar(step, nSteps);
-        val = 0;
-        for ii = 1:nSteps % for each time step in the summand
-          if self.spikeTrain(ii, recording) > 0
-            val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii, recording);
-          end
+    for step = 1:nSteps % for each time step in the rate function
+      textbar(step, nSteps);
+      val = 0;
+      for ii = 1:nSteps % for each time step in the summand
+        if self.spikeTrain(ii) > 0
+          val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii);
         end
-        rate(step, recording) = dt / normalization * val;
       end
+      rate(step) = dt / normalization * val;
     end
   end
 
