@@ -1,5 +1,7 @@
 function rate = rateEstimate(self, varargin)
   % leave-one-out rate estimate for a kernel smoother
+  % smooths a spike train with a kernel (with a bandwidth parameter)
+  % then computes the firing rate estimate at each point
 
   %% Arguments
     % self: a BandwidthEstimator object
@@ -7,7 +9,7 @@ function rate = rateEstimate(self, varargin)
     % parallel: boolean, determines whether rateEstimate should be run in parallel
 
   %% Outputs
-    % rate: scalar double, the firing rate estimate after smoothing by a kernel
+    % rate: vector of firing rate estimates after smoothing of the spike train by a kernel
 
   p = inputParser;
   p.addParameter('kernel', @self.hanning);
@@ -27,7 +29,7 @@ function rate = rateEstimate(self, varargin)
 
   if parallel
     for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
-      for step = 1:nSteps % for each time step in the rate function
+      parfor step = 1:nSteps % for each time step in the rate function
         textbar(step, nSteps);
         val = 0;
         for ii = 1:nSteps % for each time step in the summand
@@ -40,7 +42,7 @@ function rate = rateEstimate(self, varargin)
     end
   else
     for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
-      parfor step = 1:nSteps % for each time step in the rate function
+      for step = 1:nSteps % for each time step in the rate function
         % textbar(step, nSteps);
         val = 0;
         for ii = 1:nSteps % for each time step in the summand
