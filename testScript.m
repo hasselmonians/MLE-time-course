@@ -8,7 +8,13 @@ root.cel = [9, 3];
 % create BandwithEstimator object
 best = BandwidthEstimator('Fs', root.fs_video, 'time', root.ts(end), 'spikeTrain', root.cel_i{1});
 
-% rate estimate
-rate = best.rateEstimate('bandwidth', 125, 'parallel', true);
-figure
-plot(rate / max(vectorise(rate)));
+% leave-one-out cross-validated likelihood of frequency estimate
+bands = 10:10:1000;
+like = best.characterizeLikelihood('kernel', @best.hanning, 'bandwidth', bands, 'parallel', true);
+
+% visualize
+figure;
+plot(bands, like);
+title('Likelihood over Bandwidth')
+xlabel('bandwidth (ms)')
+ylabel('likelihood')
