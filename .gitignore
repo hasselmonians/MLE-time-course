@@ -111,3 +111,6 @@ venv.bak/
 # pictures/files
 .png
 .pdf
+
+# anything in a cluster folder
+cluster/
