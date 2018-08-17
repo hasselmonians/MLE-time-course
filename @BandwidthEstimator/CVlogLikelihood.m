@@ -16,7 +16,7 @@ function like = CVlogLikelihood(self, rate)
 
   like = 0;
   for step = 1:length(nSteps)
-    like = like + self.spikeTrain(step, recording) * log(rate(step, recording) * dt) - rate(step, recording) * dt;
+    like = like + self.spikeTrain(step) * log(rate(step) * dt) - rate(step) * dt;
   end
 
 end % function

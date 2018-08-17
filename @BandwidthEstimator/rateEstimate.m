@@ -33,7 +33,7 @@ function rate = rateEstimate(self, varargin)
       val = 0;
       for ii = 1:nSteps % for each time step in the summand
         if self.spikeTrain(ii) > 0
-          val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii);
+            val = val + kernel(step - ii, bandwidth, true) * self.spikeTrain(ii);
         end
       end
       rate(step) = dt / normalization * val;
