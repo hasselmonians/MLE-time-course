@@ -1,32 +1,27 @@
-function like = CVlogLikelihood(self, varargin)
+function like = CVlogLikelihood(self, rate)
   % computes the cross-validated log-likelihood of the firing rate w.r.t. the bandwidth
   % based on Prerau & Eden 2011
 
   %% Arguments:
     % self: the BandwithEstimator object
+    % rate: vector of kernel-smoothed rate values for each time-step, given a bandwidth
 
   %% Outputs:
-    % output: the log-likelihood of the bandwidth parameter
+    % like: scalar double, the log-likelihood of the bandwidth parameter
+    % if the spike train is a matrix, then the likelihood is a vector
 
-  p = inputParser;
-  p.addParameter('kernel', @self.hanning);
-  p.addParameter('bandwidth', self.Fs);
-  p.parse(varargin{:});
-  kernel = p.Results.kernel;
-  bandwidth = p.Results.bandwidth;
+  % outputs
+  like    = zeros(size(self.spikeTrain, 2), 1);
 
-% first, compute the rate estimate for the given parameter
-rate = self.rateEstimate('kernel', kernel, 'bandwidth', bandwidth);
-like = zeros(size(self.spikeTrain, 2), 1);
+  % compute the log-likelihood
+  nSteps  = length(self.spikeTrain);
+  dt      = self.time(2) / nSteps;
 
-% then, compute the log-likelihood
-nSteps  = length(self.spikeTrain);
-dt      = self.time(2) / nSteps;
-
-for recording = 1:size(self.spikeTrain, 2)
-  val = 0;
-  for step = 1:length(nSteps)
-    val = val + self.spikeTrain(step, recording) * log(rate(step, recording) * dt) - rate(step, recording) * dt;
+  for recording = 1:size(self.spikeTrain, 2)
+    val = 0;
+    for step = 1:length(nSteps)
+      val = val + self.spikeTrain(step, recording) * log(rate(step, recording) * dt) - rate(step, recording) * dt;
+    end
+    like(recording) = val;
   end
-  like(recording) = val;
 end
