@@ -4,10 +4,10 @@ function rate = rateEstimate(self, varargin)
   %% Arguments
     % self: a BandwidthEstimator object
     % kernel: a function handle
+    % parallel: boolean, determines whether rateEstimate should be run in parallel
 
   %% Outputs
-    %
-    %
+    % rate: scalar double, the firing rate estimate after smoothing by a kernel
 
   p = inputParser;
   p.addParameter('kernel', @self.hanning);
@@ -25,8 +25,7 @@ function rate = rateEstimate(self, varargin)
 
   [~, normalization] = kernel(1, bandwidth);
 
-switch parallel
-  case true
+  if parallel
     for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
       for step = 1:nSteps % for each time step in the rate function
         textbar(step, nSteps);
@@ -39,7 +38,7 @@ switch parallel
         rate(step, recording) = dt / normalization * val;
       end
     end
-  case false
+  else
     for recording = 1:size(self.spikeTrain, 2) % for each spike train in the matrix
       parfor step = 1:nSteps % for each time step in the rate function
         % textbar(step, nSteps);
@@ -52,6 +51,6 @@ switch parallel
         rate(step, recording) = dt / normalization * val;
       end
     end
-end
+  end
 
 end % end function
