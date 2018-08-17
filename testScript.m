@@ -1,20 +1,25 @@
-% test all the features within the BandwithEstimator class
+function bandwidth_MLE_CV(pathname, filename)
+  % determines the best bandwidth parameter for acquiring a firing rate estimate
 
-% load a cell
-import CMBHOME.*
-load('/projectnb/hasselmogrp/Speed Modulation/Caitlins_Cells/Raw/Clamps/CMBobject_clamps-98.mat')
-root.cel = [9, 3];
+  % preamble
+  addpath(genpath('/projectnb/hasselmogrp/hoyland/MLE-time-course/'))
+  addpath(genpath('/projectnb/hasselmogrp/hoyland/srinivas.gs_mtools/src/'))
+  addpath(genpath('/projectnb/hasselmogrp/hoyland/CMBHOME/'))
+  import CMBHOME.*
 
-% create BandwithEstimator object
-best = BandwidthEstimator('Fs', root.fs_video, 'time', root.ts(end), 'spikeTrain', root.cel_i{1});
+  load(strcat(pathname,filename));
+  root.cel = [9, 3];
 
-% leave-one-out cross-validated likelihood of frequency estimate
-bands = 10:10:1000;
-like = best.characterizeLikelihood('kernel', @best.hanning, 'bandwidth', bands, 'parallel', true);
+  % create BandwithEstimator object
+  best = BandwidthEstimator('Fs', root.fs_video, 'time', root.ts(end), 'spikeTrain', root.cel_i{1});
 
-% visualize
-figure;
-plot(bands, like);
-title('Likelihood over Bandwidth')
-xlabel('bandwidth (ms)')
-ylabel('likelihood')
+  % leave-one-out cross-validated likelihood of frequency estimate
+  bands = linspace(125/root.fs_video, 256*1000/root.fs_video, 11)
+  like = best.characterizeLikelihood('kernel', @best.hanning, 'bandwidth', bands, 'parallel', true);
+
+  [~, I] = max(like);
+
+  bandwidth_MLE = bands(I);
+  MLE = like(I);
+
+end % function
