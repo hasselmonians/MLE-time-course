@@ -17,17 +17,13 @@ cellnum = [9 3; 9 4; 3 2; 5 3; 12 2; 11 3];
 % write the files
 for ii = 1:length(filename)
   outfile = ['/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster/output-' num2str(ii) '.csv'];
-  fileID = fopen(['cluster/' 'batch-' num2str(ii)], 'w');
+  fileID = fopen(['/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster/' 'batch-' num2str(ii)], 'w');
   fprintf(fileID, '#!/bin/csh\n');
   fprintf(fileID, 'module load matlab/2017a\n');
   fprintf(fileID, '#$ -l h_rt=72:00:00\n');
   fprintf(fileID, ['matlab -nodisplay -r "bandwidth_MLE_CV(''' pathname filename{ii} ''', [' num2str(cellnum(ii, 1)) ' ' num2str(cellnum(ii, 2)) '], ''' outfile '''); exit"']);
   fclose(fileID);
 end
-
-% add an output file
-fileID = fopen('cluster/output.csv', 'w');
-fclose(fileID);
 
 % add a qsub file
 fileID = fopen('cluster/batchfile.sh', 'w');
