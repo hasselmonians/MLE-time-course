@@ -15,6 +15,26 @@ spikeTrain = BandwidthEstimator.getSpikeTrain(root);
 % perform the MLE/CV test
 [estimate, kmax, loglikelihoods, bandwidths, CI] = BandwidthEstimator.cvKernel(root, spikeTrain(1:10000));
 
+% compute kmax for the first 10 minutes in 1 minute sections
+nEpochSteps = 60*root.fs_video;
+kmaxEpoch = NaN(10, 1);
+for epoch = 1:10
+  textbar(epoch, 10)
+  [~, kmaxEpoch(epoch)] = BandwidthEstimator.cvKernel(root, spikeTrain(1 + nEpochSteps*(epoch - 1) : nEpochSteps*epoch));
+end
+
+% benchmark the speed of the MLE/CV computation
+kmaxAllEpochs = NaN(10, 1);
+time = NaN(10, 1);
+for epoch = 1:10
+  textbar(epoch, 10)
+  tic;
+  [~, kmaxAllEpochs(epoch)] = BandwidthEstimator.cvKernel(root, spikeTrain(1 : nEpochSteps * epoch));
+  time(epoch) = toc;
+end
+
+return
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %          PLOT UP THE ESTIMATE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
