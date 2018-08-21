@@ -45,6 +45,9 @@ classdef BandwidthEstimator
 
   methods (Static)
 
+    [result] = kconv(data, k, dt);
+    [estimate kmax loglikelihoods bandwidths] = cvkernel(spikecounts, dt, range, ploton);
+
   end % static methods
 
 end % classdef
