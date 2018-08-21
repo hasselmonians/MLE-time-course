@@ -1,10 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                  CVEXAMPLE.M
-%                         © Michael J. Prerau, Ph.D. 2011
+%                         ï¿½ Michael J. Prerau, Ph.D. 2011
 %
 %   This code is used in thethe algorithm described in:
-%   Prerau M.J., Eden U.T. 
-%   "A General Likelihood Framework for Characterizing the Time Course of Neural Activity", 
+%   Prerau M.J., Eden U.T.
+%   "A General Likelihood Framework for Characterizing the Time Course of Neural Activity",
 %   Journal of Neuroscience, 2011
 %
 %   An example of how to use the cross-validation kernel smoother in
@@ -26,24 +26,25 @@ for p=[1.5 5]
     dt=5/300;
     t=dt:dt:5;
     lambda=sin(p*t);
-    
+
     %Scale the function to be an accurate rate
-    lambda=(lambda-min(lambda))*150+5;
-    
+    % lambda=(lambda-min(lambda))*150+5;
+    lambda = (lambda - min(lambda))/2;
+
     %Generate spikes with inhomogenous Poisson model
     spikecount=poissrnd(lambda*dt);
-    
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %Run the cross-validated kernel smoother--Just one command :)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [estimate kmax loglikelihoods bandwidths CI]=cvkernel(spikecount, dt,[],1);
-    
+
     %Plot the data and the estimate of the true value
     axs=get(gcf,'children');
     subplot(axs(3));
     hold on
     plot(t,lambda,':','linewidth',2,'color',[.8 .8 .8]);
-    
+
     %Make likelihood easy to view
     subplot(212)
     xlim([0 1]);
