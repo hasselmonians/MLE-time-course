@@ -117,7 +117,7 @@ ylabel(ax(5), 'Spike Count');
 
 prettyFig()
 
-for ii = 1:length(ax)
+for ii = 4:5
   box(ax(ii), 'off');
 end
 
