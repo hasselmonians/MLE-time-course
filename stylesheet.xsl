@@ -1,9 +1,9 @@
-
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
 This is an XSL stylesheet which converts mscript XML files into XSLT.
 Use the XSLT command to perform the conversion.
+
 Ned Gulley and Matthew Simoneau, September 2003
 Copyright 1984-2007 The MathWorks, Inc.
 $Revision: 1.1.6.7 $  $Date: 2008/02/29 12:45:30 $
@@ -32,7 +32,7 @@ $Revision: 1.1.6.7 $  $Date: 2008/02/29 12:45:30 $
 
 \begin{document}
 
-\title{Maximum-Likelihood Estimation with Leave-One-Out Cross-Validation for Spike Train Data}
+\title{Maximum-Likelihood Estimation of Bandwidth Parameter with Leave-One-Out Cross-Validation for Kernel Smoothing Spike Trains}
 \author{Alec Hoyland}
 \maketitle
 
