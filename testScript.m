@@ -111,7 +111,7 @@ ylim(ax(4), [0 1.2*estimax]);
 
 
 ax(5)=axes('position', get(ax(4), 'position'));
-stem(ax(5), t, spikeTrain(1:nEpochSteps), 'marker', 'none');
+stem(ax(5), t, spikeTrain(1:nEpochSteps), 'Color', [0 0 0], 'marker', 'none', 'LineWidth', 1);
 set(ax(5), 'color', 'none', 'yaxislocation', 'right', 'xticklabel', '', 'ylim', [0 2*max(spikeTrain)])
 ylabel(ax(5), 'Spike Count');
 
