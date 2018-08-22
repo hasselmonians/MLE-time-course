@@ -22,8 +22,8 @@ root.cel = [2 1];
 % make a binned spike train
 spikeTrain = BandwidthEstimator.getSpikeTrain(root);
 
-% analyze the first ten minutes of data
-nEpochSteps = 10*60*root.fs_video;
+% analyze the first twenty minutes of data
+nEpochSteps = 20*60*root.fs_video;
 % hash the full spike train
 range = 3:2:(60*root.fs_video);
 h = GetMD5([GetMD5(nEpochSteps) GetMD5(spikeTrain) GetMD5(range)]);
