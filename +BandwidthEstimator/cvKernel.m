@@ -42,7 +42,7 @@
 %       Run "cvexample.m" for an example of the cross-validated kernel
 %       smoother used on spiking data.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spikeTrain, range)
+function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spikeTrain, range, parallel)
 
   if ~any(spikeTrain)
       estimate=zeros(1,length(spikeTrain));
@@ -53,9 +53,12 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spike
       return;
   end
 
+  if nargin < 4
+    parallel = false;
+  end
+
   % set up the time-step
-  % dt = 1 / root.fs_video;
-  dt = 1;
+  dt = 1 / root.fs_video;
 
   %Make sure spikeTrain isn't logical
   if ~isa(spikeTrain,'double')
@@ -85,32 +88,59 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spike
   loglikelihoods=zeros(1,length(bandwidths));
 
   %Loop through kernel sizes, do a leave one out filter, and find loglikelihoods
-  for wn=1:length(bandwidths)
-      %Set window size
-      if ~mod(bandwidths(wn),2)
-          bandwidths(wn)=bandwidths(wn)+1;
-      end
-      w=bandwidths(wn);
+  if parallel
+    parfor wn=1:length(bandwidths)
+        %Set window size
+        if ~mod(bandwidths(wn),2)
+            bandwidths(wn)=bandwidths(wn)+1;
+        end
+        w=bandwidths(wn);
 
-      %Set center point to zero for leave one out filter
-      mid=(w-1)/2+1;
-      k=hanning(w);
-      k(mid)=0;
+        %Set center point to zero for leave one out filter
+        mid=(w-1)/2+1;
+        k=hanning(w);
+        k(mid)=0;
 
-      %Normalize the notch kernel
-      k=k/sum(k);
+        %Normalize the notch kernel
+        k=k/sum(k);
 
-      %Perform lave one out convolution
-      l1o=BandwidthEstimator.kconv(spikeTrain,k,dt);
+        %Perform lave one out convolution
+        l1o=BandwidthEstimator.kconv(spikeTrain,k,dt);
 
-      %Fix log(0) problem
-      l1o(~l1o)=1e-5;
+        %Fix log(0) problem
+        l1o(~l1o)=1e-5;
 
-      %Calculate the likelihood
-      loglikelihoods(wn)=sum(-l1o*dt+spikeTrain.*log(l1o)+spikeTrain*log(dt)-log(factorial(spikeTrain)));
+        %Calculate the likelihood
+        loglikelihoods(wn)=sum(-l1o*dt+spikeTrain.*log(l1o)+spikeTrain*log(dt)-log(factorial(spikeTrain)));
+    end % wn
+  else
+    for wn=1:length(bandwidths)
+        %Set window size
+        if ~mod(bandwidths(wn),2)
+            bandwidths(wn)=bandwidths(wn)+1;
+        end
+        w=bandwidths(wn);
 
-      textbar(wn, length(bandwidths))
-  end
+        %Set center point to zero for leave one out filter
+        mid=(w-1)/2+1;
+        k=hanning(w);
+        k(mid)=0;
+
+        %Normalize the notch kernel
+        k=k/sum(k);
+
+        %Perform lave one out convolution
+        l1o=BandwidthEstimator.kconv(spikeTrain,k,dt);
+
+        %Fix log(0) problem
+        l1o(~l1o)=1e-5;
+
+        %Calculate the likelihood
+        loglikelihoods(wn)=sum(-l1o*dt+spikeTrain.*log(l1o)+spikeTrain*log(dt)-log(factorial(spikeTrain)));
+
+        textbar(wn, length(bandwidths))
+    end % wn
+  end % parallel
 
   %Calculate the maximum likelihood bandwidth
   [~, ki]=max(loglikelihoods);
