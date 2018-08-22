@@ -29,12 +29,12 @@ range = 3:2:(60*root.fs_video);
 h = GetMD5([GetMD5(nEpochSteps) GetMD5(spikeTrain) GetMD5(range)]);
 
 if isempty(cache(h))
-  [estimate, kmax, loglikelihoods, bandwidths, CI] = BandwidthEstimator.cvKernel(root, spikeTrain(1:nEpochSteps), range);
+  [estimate, kmax, loglikelihoods, bandwidths, CI] = BandwidthEstimator.cvKernel(root, spikeTrain(1:nEpochSteps), range, false);
   cache(h, estimate, kmax, loglikelihoods, bandwidths, CI);
 else
   [CI, bandwidths, estimate, kmax, loglikelihoods] = cache(h);
 end
-
+return
 %% Cross-Validated Maximum Likelihood Bandwidth Estimate
 % (Top) The cross-validated kernel smoother estimate represents the firing rate given smoothing by the Hanning kernel with the bandwidth parameter at the cross-validated maximum likelihood estimate. (Bottom) Distribution of bandwidth likelihood. Green rectangle demarcates the confidence interval, as computed by the Fisher information.
 
