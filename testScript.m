@@ -27,7 +27,7 @@ nEpochSteps = 2*60*root.fs_video;
 
 h = GetMD5([GetMD5(nEpochSteps) GetMD5(spikeTrain)]);
 if isempty(cache(h))
-  [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spikeTrain(1:nEpochSteps));
+  [estimate, kmax, loglikelihoods, bandwidths, CI] = BandwidthEstimator.cvKernel(root, spikeTrain(1:nEpochSteps));
   cache(h, estimate, kmax, loglikelihoods, bandwidths, CI);
 else
   [CI, bandwidths, estimate, kmax, loglikelihoods] = cache(h);
