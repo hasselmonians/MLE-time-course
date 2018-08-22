@@ -90,7 +90,7 @@ end
 fig = figure;
 c = linspecer(4);
 
-ax(4) = fig.Children;
+ax(4) = gca;
 hold on
 estimax = 0;
 for ii = 1:4
