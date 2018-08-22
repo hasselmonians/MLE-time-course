@@ -32,8 +32,8 @@ $Revision: 1.1.6.7 $  $Date: 2008/02/29 12:45:30 $
 
 \begin{document}
 
-\title{Awesome MATLAB notebook}
-\author{Srinivas Gorur-Shandilya}
+\title{Maximum-Likelihood Estimation with Leave-One-Out Cross-Validation for Spike Train Data}
+\author{Alec Hoyland}
 \maketitle
 
     <!-- Determine if the there should be an introduction section. -->
