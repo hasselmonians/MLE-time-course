@@ -74,7 +74,7 @@ ylabel(ax(3), 'Likelihood');
 title(ax(3), 'Bandwidth Likelihood');
 
 prettyFig()
-return
+
 for ii = 1:length(ax)
   box(ax(ii), 'off');
 end
