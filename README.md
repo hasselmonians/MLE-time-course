@@ -9,7 +9,8 @@ The core files are packed within `BandwidthEstimator`.
 
 * `getSpikeTimes`. Produces a vector of spike times from a `CMBHOME` Session object.
 * `getSpikeTrain`. Produces a binned spike train vector, where the bin size is determined by the video sample size (for _in-vivo_ recordings).
-* `cvKernel`. Perform the leave-one-out cross-validated maximum likelihood analysis. This is the main function in the project.
+* `cvKernel`. Perform the leave-one-out cross-validated maximum likelihood analysis. This is the main function in the project. The second output is the best estimate for the bandwidth parameter in units of time-steps. Multiply by the time-step (`1/root.fs_video`) to get the actual bandwidth in seconds.
+* `getFiringRate`. Produces a vector of the convolved binned spike train given a known bandwidth parameter.
 
 The project is written in `MATLAB`. You will need to make sure that you have the following dependencies
 * `CMBHOME` is required for general access to the `Session` object, though actually, only `fs_video`, `ts` are required. The analysis function will accept most any spike train.
