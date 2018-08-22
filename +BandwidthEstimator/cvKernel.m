@@ -70,8 +70,8 @@ function [estimate, kmax, loglikelihoods, bandwidths, CI] = cvKernel(root, spike
   L=round(N/2);
 
   %Set kernel range and adjust to make the first odd < N
-  if mod(L:,2)==0
-      L= L - 1;
+  if mod(L, 2)==0
+      L = L - 1;
   end
 
   %Set bandwidths if not specified
