@@ -104,13 +104,16 @@ venv.bak/
 .mypy_cache/
 
 # matlab stuff
-.mex
-.mexa64
-.mat
+*.mex
+*.mexa64
+*.mat
 
 # pictures/files
-.png
-.pdf
+*.png
+*.pdf
 
 # anything in a cluster folder
 cluster/
+
+# anything in a cache folder
+.cache/
