@@ -34,7 +34,7 @@ if isempty(cache(h))
 else
   [CI, bandwidths, estimate, kmax, loglikelihoods] = cache(h);
 end
-return
+
 %% Cross-Validated Maximum Likelihood Bandwidth Estimate
 % (Top) The cross-validated kernel smoother estimate represents the firing rate given smoothing by the Hanning kernel with the bandwidth parameter at the cross-validated maximum likelihood estimate. (Bottom) Distribution of bandwidth likelihood. Green rectangle demarcates the confidence interval, as computed by the Fisher information.
 
@@ -49,12 +49,12 @@ t = (1/root.fs_video):(1/root.fs_video):(length(spikeTrain(1:nEpochSteps))*(1/ro
 %Plot the data and the estimate of the true value
 ax(1) = subplot(211);
 hold on
-plot(ax(1), t, estimate*root.fs_video, 'r')
+plot(ax(1), t, estimate, 'r')
 
 xlabel(ax(1), 'Time (s)');
 ylabel(ax(1), 'Rate (Hz)');
 title(ax(1), 'Cross-Validated Kernel Smoother Estimate');
-ylim(ax(1), [0 1.2*max(estimate*root.fs_video)]);
+ylim(ax(1), [0 1.2*max(estimate)]);
 
 ax(2)=axes('position', get(ax(1), 'position'));
 stem(ax(2), t, spikeTrain(1:nEpochSteps), 'marker', 'none', 'Color', [0 0 0]);
@@ -67,7 +67,7 @@ hold on
 plot(ax(3), bandwidths*(1/root.fs_video), likelihood, 'k');
 plot(ax(3), kmax*(1/root.fs_video), lmax, 'r.', 'markersize', 20);
 axis(ax(3), [0 kmax*(1/root.fs_video)*2,  0,  lmax]);
-fill(ax(3), (1/root.fs_video)*[CI fliplr(CI)], [lmax lmax 0 0], [0 1 0], 'FaceColor', [0 1 0], 'FaceAlpha', 0.2, 'edgecolor', 'none');
+fill(ax(3), [CI fliplr(CI)], [lmax lmax 0 0], [0 1 0], 'FaceColor', [0 1 0], 'FaceAlpha', 0.2, 'edgecolor', 'none');
 set(ax(3), 'yticklabel', '');
 xlabel(ax(3), 'Hanning Bandwidth Size (s)');
 ylabel(ax(3), 'Likelihood');
