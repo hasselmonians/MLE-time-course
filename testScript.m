@@ -22,13 +22,13 @@ root.cel = [2 1];
 % make a binned spike train
 spikeTrain = BandwidthEstimator.getSpikeTrain(root);
 
-% analyze the first two minutes of data
-nEpochSteps = 2*60*root.fs_video;
+% analyze the first ten minutes of data
+nEpochSteps = 10*60*root.fs_video;
 % hash the full spike train
 h = GetMD5([GetMD5(nEpochSteps) GetMD5(spikeTrain)]);
 
 if isempty(cache(h))
-  [estimate, kmax, loglikelihoods, bandwidths, CI] = BandwidthEstimator.cvKernel(root, spikeTrain(1:nEpochSteps));
+  [estimate, kmax, loglikelihoods, bandwidths, CI] = BandwidthEstimator.cvKernel(root, spikeTrain(1:nEpochSteps), 3:2:60);
   cache(h, estimate, kmax, loglikelihoods, bandwidths, CI);
 else
   [CI, bandwidths, estimate, kmax, loglikelihoods] = cache(h);
@@ -94,7 +94,8 @@ ax(4) = gca;
 hold on
 estimax = 0;
 for ii = 1:4
-  bandwidth = [191 253 381 571];
+  bandwidth = round([0.5 0.75 1.0 1.25]*kmax);
+  bandwidth(mod(bandwidth, 2) == 0) = bandwidth(mod(bandwidth, 2) == 0) + 1;
   estimate = BandwidthEstimator.getFiringRate(root, spikeTrain(1:nEpochSteps), bandwidth(ii));
   if estimax < max(estimate)
     estimax = max(estimate);
