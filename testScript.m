@@ -2,6 +2,7 @@
 % using awesome-matlab-notebook by Srinivas Gorur-Shandilya (http://srinivas.gs/contact/)
 % this work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
 % to view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/.ts
+close all; clear; clc;
 
 pHeader;
 tic
@@ -22,10 +23,11 @@ root.cel = [2 1];
 % make a binned spike train
 spikeTrain = BandwidthEstimator.getSpikeTrain(root);
 
-% compute kmax for the first 2 minutes
+% analyze the first two minutes of data
 nEpochSteps = 2*60*root.fs_video;
-
+% hash the full spike train
 h = GetMD5([GetMD5(nEpochSteps) GetMD5(spikeTrain)]);
+
 if isempty(cache(h))
   [estimate, kmax, loglikelihoods, bandwidths, CI] = BandwidthEstimator.cvKernel(root, spikeTrain(1:nEpochSteps));
   cache(h, estimate, kmax, loglikelihoods, bandwidths, CI);
@@ -33,46 +35,49 @@ else
   [CI, bandwidths, estimate, kmax, loglikelihoods] = cache(h);
 end
 
-
 %% Cross-Validated Maximum Likelihood Bandwidth Estimate
 % (Top) The cross-validated kernel smoother estimate represents the firing rate given smoothing by the Hanning kernel with the bandwidth parameter at the cross-validated maximum likelihood estimate. (Bottom) Distribution of bandwidth likelihood. Green rectangle demarcates the confidence interval, as computed by the Fisher information.
+
 
 % plot the likelihood distribution
 figure;
 %Exponentiate the likelihood for easy viewing
 likelihood = exp(loglikelihoods - max(loglikelihoods));
 lmax = max(likelihood);
-t = (1/root.fs_video):(1/root.fs_video):(length(spikeTrain)*(1/root.fs_video));
+t = (1/root.fs_video):(1/root.fs_video):(length(spikeTrain(1:nEpochSteps))*(1/root.fs_video));
 
 %Plot the data and the estimate of the true value
-ax = subplot(211);
+ax(1) = subplot(211);
 hold on
-plot(t, estimate, 'r')
+plot(ax(1), t, estimate*root.fs_video, 'r')
 
-axis tight
-xlabel('Time (s)');
-ylabel('Rate (Hz)');
-title('Cross-Validated Kernel Smoother Estimate');
+xlabel(ax(1), 'Time (s)');
+ylabel(ax(1), 'Rate (Hz)');
+title(ax(1), 'Cross-Validated Kernel Smoother Estimate');
+ylim(ax(1), [0 1.2*max(estimate*root.fs_video)]);
 
-ax2=axes('position', get(ax, 'position'));
-subplot(ax2);
-stem(t, spikeTrain, 'marker', 'none');
-set(gca,'color', 'none', 'yaxislocation', 'right', 'xticklabel', '')
-ylabel('Spike Count');
+ax(2)=axes('position', get(ax(1), 'position'));
+stem(ax(2), t, spikeTrain(1:nEpochSteps), 'marker', 'none', 'Color', [0 0 0]);
+set(ax(2), 'color', 'none', 'yaxislocation', 'right', 'xticklabel', '', 'ylim', [0 2*max(spikeTrain)]);
+ylabel(ax(2), 'Spike Count');
 
 % Plot the likelihood and confidence bounds for the bandwidth estimate
-subplot(212)
+ax(3) = subplot(212);
 hold on
-fill([CI fliplr(CI)], [lmax lmax 0 0], 'g', 'edgecolor', 'none');
-plot(bandwidths*(1/root.fs_video), likelihood, 'k');
-plot(kmax*(1/root.fs_video), lmax, 'r.', 'markersize', 20);
-axis([0 kmax*(1/root.fs_video)*2,  0,  lmax]);
-set(gca, 'yticklabel', '');
-xlabel('Hanning Bandwidth Size (s)');
-ylabel('Likelihood');
-title('Bandwidth Likelihood');
+plot(ax(3), bandwidths*(1/root.fs_video), likelihood, 'k');
+plot(ax(3), kmax*(1/root.fs_video), lmax, 'r.', 'markersize', 20);
+axis(ax(3), [0 kmax*(1/root.fs_video)*2,  0,  lmax]);
+fill(ax(3), (1/root.fs_video)*[CI fliplr(CI)], [lmax lmax 0 0], [0 1 0], 'FaceColor', [0 1 0], 'FaceAlpha', 0.2, 'edgecolor', 'none');
+set(ax(3), 'yticklabel', '');
+xlabel(ax(3), 'Hanning Bandwidth Size (s)');
+ylabel(ax(3), 'Likelihood');
+title(ax(3), 'Bandwidth Likelihood');
 
 prettyFig()
+return
+for ii = 1:length(ax)
+  box(ax(ii), 'off');
+end
 
 if being_published
 	snapnow
@@ -83,31 +88,39 @@ end
 %% Assessment of Kernel Smoothing with Various Bandwidth Parameters
 % Several bandwidth parameters were tested to demonstrate the effectiveness of the CV/MLE method.
 
-figure;
+fig = figure;
 c = linspecer(4);
 
-ax = gca;
+ax(4) = fig.Children;
 hold on
+estimax = 0;
 for ii = 1:4
   bandwidth = [191 253 381 571];
-  estimate = BandwidthEstimator.getFiringRate(root, SpikeTrain, bandwidth(ii));
-  plot(t, estimate, '-', 'LineWidth', 1, 'Color', c(ii, :));
+  estimate = BandwidthEstimator.getFiringRate(root, spikeTrain(1:nEpochSteps), bandwidth(ii));
+  if estimax < max(estimate)
+    estimax = max(estimate);
+  end
+  plot(ax(4), t, estimate, '-', 'LineWidth', 1, 'Color', c(ii, :));
   paramID{ii} = ['k = ' num2str(bandwidth(ii))];
 end
 
-axis tight
-xlabel('Time (s)');
-ylabel('Rate (Hz)');
-title('Cross-Validated Kernel Smoother Estimate');
-leg = legend(ax, paramID, 'Location', 'eastoutside');
+xlabel(ax(4), 'Time (s)');
+ylabel(ax(4), 'Rate (Hz)');
+title(ax(4), 'Cross-Validated Kernel Smoother Estimate');
+leg = legend(ax(4), paramID, 'Location', 'best');
+ylim(ax(4), [0 1.2*estimax]);
 
-ax2=axes('position', get(ax, 'position'));
-subplot(ax2);
-stem(t, spikeTrain, 'marker', 'none');
-set(gca,'color', 'none', 'yaxislocation', 'right', 'xticklabel', '')
-ylabel('Spike Count');
+
+ax(5)=axes('position', get(ax(4), 'position'));
+stem(ax(5), t, spikeTrain(1:nEpochSteps), 'marker', 'none');
+set(ax(5), 'color', 'none', 'yaxislocation', 'right', 'xticklabel', '', 'ylim', [0 2*max(spikeTrain)])
+ylabel(ax(5), 'Spike Count');
 
 prettyFig()
+
+for ii = 1:length(ax)
+  box(ax(ii), 'off');
+end
 
 if being_published
 	snapnow
