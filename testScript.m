@@ -29,7 +29,7 @@ time = NaN(10, 1);
 for epoch = 1:10
   textbar(epoch, 10)
   tic;
-  [~, kmaxAllEpochs(epoch)] = BandwidthEstimator.cvKernel(root, spikeTrain(1 : nEpochSteps * epoch));
+  [~, kmaxAllEpochs(epoch), loglikelihoods] = BandwidthEstimator.cvKernel(root, spikeTrain(1 : nEpochSteps * epoch));
   time(epoch) = toc;
 end
 
