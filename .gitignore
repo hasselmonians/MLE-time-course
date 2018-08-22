@@ -114,6 +114,7 @@ venv.bak/
 
 # anything in a cluster folder
 cluster/
+html/
 
 # anything in a cache folder
 .cache/
