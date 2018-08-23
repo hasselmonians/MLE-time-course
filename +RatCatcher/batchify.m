@@ -5,7 +5,7 @@ function batchify(experimenter, alpha, pathname)
 
   % remove all old files
   delete cluster/batch*
-  
+
   % write the batch files
   for ii = 1:length(filename)
     outfile = ['cluster/output-' num2str(ii) '.csv'];
