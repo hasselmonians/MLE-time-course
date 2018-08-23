@@ -1,10 +1,16 @@
-function batchFunction(filename, cellnum, outfile)
+function batchFunction(filename, cellnum, outfile, test)
+
+  if nargin < 4
+    test = false;
+  end
 
   % preamble
-  addpath(genpath('/projectnb/hasselmogrp/hoyland/MLE-time-course/'))
-  addpath(genpath('/projectnb/hasselmogrp/hoyland/srinivas.gs_mtools/src/'))
-  addpath(genpath('/projectnb/hasselmogrp/hoyland/CMBHOME/'))
-  import CMBHOME.*
+  if ~test
+    addpath(genpath('/projectnb/hasselmogrp/hoyland/MLE-time-course/'))
+    addpath(genpath('/projectnb/hasselmogrp/hoyland/srinivas.gs_mtools/src/'))
+    addpath(genpath('/projectnb/hasselmogrp/hoyland/CMBHOME/'))
+    import CMBHOME.*
+  end
 
   % acquire data using function arguments
   load(filename);
