@@ -28,6 +28,11 @@ case 'Caitlin'
     cellcell{ii}   = stringParts{2};
   end
 
+  % parse the filenames
+  for ii = 1:length(filename)
+    filename{ii} = [filename{ii} '.mat'];
+  end
+
   % parse the cellnum
   cellnum = NaN(length(cellcell), 2);
   for ii = 1:length(cellcell)
