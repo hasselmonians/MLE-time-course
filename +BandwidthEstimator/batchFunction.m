@@ -23,7 +23,7 @@ function batchFunction(filename, cellnum, outfile, test)
   range = 3:2:(60*root.fs_video);
 
   % perform leave-one-out cross-validation maximum likelihood of frequency estimate
-  [estimate, kmax, loglikelihoods, bandwidths, CI] = BandwidthEstimator.cvKernel(root, spikeTrain, range);
+  [estimate, kmax, loglikelihoods, bandwidths, CI] = BandwidthEstimator.cvKernel(root, spikeTrain, range, true);
 
   % save the data
   csvwrite(outfile, [kmax CI]);
