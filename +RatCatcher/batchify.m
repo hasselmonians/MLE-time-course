@@ -20,7 +20,7 @@ function batchify(experimenter, alpha, pathname)
     fprintf(fileID, '#!/bin/csh\n');
     fprintf(fileID, 'module load matlab/2017a\n');
     fprintf(fileID, '#$ -l h_rt=72:00:00\n');
-    fprintf(fileID, ['matlab -nodisplay -r "BandwidthEstimator.batchFunction(''' pathname filename{ii} ''', [' num2str(cellnum(ii, 1)) ' ' num2str(cellnum(ii, 2)) '], ''' outfile '''); exit"']);
+    fprintf(fileID, ['matlab -nodisplay -r "BandwidthEstimator.batchFunction(''' filename{ii} ''', [' num2str(cellnum(ii, 1)) ' ' num2str(cellnum(ii, 2)) '], ''' outfile ''', true); exit"']);
     fclose(fileID);
   end
 
