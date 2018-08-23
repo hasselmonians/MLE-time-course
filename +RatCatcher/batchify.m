@@ -1,5 +1,10 @@
 function batchify(experimenter, alpha, pathname)
 
+  directory = pwd;
+  if strcmp(directory(end-6:end), 'cluster')
+    error('Error. Not in cluster/ directory. Aborting.')
+  end
+
   % writes the batch scripts
   [filename, cellnum] = RatCatcher.parse(experimenter, alpha);
 
@@ -8,9 +13,9 @@ function batchify(experimenter, alpha, pathname)
 
   % write the batch files
   for ii = 1:length(filename)
-    outfile = ['cluster/output-' num2str(ii) '.csv'];
+    outfile = ['output-' num2str(ii) '.csv'];
     csvwrite(outfile, []);
-    infile = ['cluster/batch-' num2str(ii)];
+    infile = ['batch-' num2str(ii)];
     fileID  = fopen(infile, 'w');
     fprintf(fileID, '#!/bin/csh\n');
     fprintf(fileID, 'module load matlab/2017a\n');
