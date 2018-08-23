@@ -1,3 +1,3 @@
 % run this script to generate the batchfile
 
-RatCatcher.batchify(experimenter, alpha, pathname);
+RatCatcher.batchify('Caitlin', 'A', '/projectnb/hasselmogrp/hoyland/data/caitlin/');

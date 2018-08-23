@@ -13,8 +13,8 @@ function batchFunction(filename, cellnum, outfile, test)
   end
 
   % acquire data using function arguments
-  pathname = '/projectnb/hasselmogrp/hoyland/data/caitlin/';
-  load([pathname filename]);
+  % pathname = '/projectnb/hasselmogrp/hoyland/data/caitlin/';
+  load(filename);
   root.cel = cellnum;
 
   % generate the spike train from the in-vivo object
