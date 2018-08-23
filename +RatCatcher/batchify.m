@@ -9,10 +9,12 @@ function batchify(experimenter, alpha, pathname)
   % write the batch files
   for ii = 1:length(filename)
     outfile = ['cluster/output-' num2str(ii) '.csv'];
-    fileID  = fopen(outfile, 'w');
+    csvwrite(outfile, []);
+    infile = ['cluster/batch-' num2str(ii)];
+    fileID  = fopen(infile, 'w');
     fprintf(fileID, '#!/bin/csh\n');
     fprintf(fileID, 'module load matlab/2017a\n');
-    fprintf(fileID, '#$ -l h_rt=72:00:00');
+    fprintf(fileID, '#$ -l h_rt=72:00:00\n');
     fprintf(fileID, ['matlab -nodisplay -r "batchFunction(''' pathname filename{ii} ''', [' num2str(cellnum(ii, 1)) ' ' num2str(cellnum(ii, 2)) '], ''' outfile '''); exit"']);
     fclose(fileID);
   end
