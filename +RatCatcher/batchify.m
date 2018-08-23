@@ -5,10 +5,10 @@ function batchify(experimenter, alpha, pathname)
 
   % remove all old files
   delete cluster/batch*
-
+  keyboard
   % write the batch files
   for ii = 1:length(filename)
-    outfile = ['/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster/output-' num2str(ii) '.csv'];
+    outfile = ['cluster/output-' num2str(ii) '.csv'];
     fileID  = fopen(outfile, 'w');
     fprintf(fileID, '#!/bin/csh\n');
     fprintf(fileID, 'module load matlab/2017a\n');
