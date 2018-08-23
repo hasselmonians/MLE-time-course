@@ -1,7 +1,7 @@
 function batchify(experimenter, alpha, pathname)
 
   directory = pwd;
-  if strcmp(directory(end-6:end), 'cluster')
+  if ~strcmp(directory(end-6:end), 'cluster')
     error('Error. Not in cluster/ directory. Aborting.')
   end
 
