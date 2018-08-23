@@ -35,7 +35,7 @@ case 'Caitlin'
     filename      = strrep(filename, old{ii}, new{ii});
   end
   for ii = 1:length(filename)
-    filename{ii}  = [filename{ii} '.mat'];
+    filename{ii}  = ['/projectnb/hasselmogrp/hoyland/data/caitlin/' filename{ii} '.mat'];
   end
 
   % parse the cellnum
