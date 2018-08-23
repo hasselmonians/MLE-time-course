@@ -9,7 +9,7 @@ function batchify(experimenter, alpha, pathname)
   [filename, cellnum] = RatCatcher.parse(experimenter, alpha);
 
   % remove all old files
-  delete cluster/batch*
+  delete batch*
 
   % write the batch files
   for ii = 1:length(filename)
