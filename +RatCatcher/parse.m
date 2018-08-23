@@ -25,12 +25,17 @@ case 'Caitlin'
   for ii = 1:length(cluster.RowNodeNames)
     stringParts   = strsplit(cluster.RowNodeNames{ii}, '_cell_');
     filename{ii}  = stringParts{1};
-    cellcell{ii}   = stringParts{2};
+    cellcell{ii}  = stringParts{2};
   end
 
   % parse the filenames
+  old             = {'bender', 'calculon', 'clamps', 'cm-19', 'cm-20', 'cm-41', 'cm-47', 'cm-48', 'cm-51', 'nibbler', 'zoidberg'};
+  new             = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '01'};
+  for ii = 1:length(old)
+    filename      = strrep(filename, old{ii}, new{ii});
+  end
   for ii = 1:length(filename)
-    filename{ii} = [filename{ii} '.mat'];
+    filename{ii}  = [filename{ii} '.mat'];
   end
 
   % parse the cellnum
