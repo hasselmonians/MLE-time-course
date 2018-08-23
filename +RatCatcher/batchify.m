@@ -1,7 +1,7 @@
 function batchify(experimenter, alpha, pathname)
 
   directory = pwd;
-  if strcmp(directory(end-6:end), 'cluster')
+  if ~strcmp(directory(end-6:end), 'cluster')
     error('Error. Not in cluster/ directory. Aborting.')
   end
 
@@ -25,7 +25,7 @@ function batchify(experimenter, alpha, pathname)
   end
 
   % add a qsub file
-  fileID = fopen('cluster/batchfile.sh', 'w');
+  fileID = fopen('batchfile.sh', 'w');
   log = '/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster/log/';
   err = '/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster/err/';
   for ii = 1:length(filename)
