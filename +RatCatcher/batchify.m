@@ -7,22 +7,22 @@ function arg = batchify(varargin)
     % for experimenter = 'Caitlin', this should be an ID from cluster_info.mat
     % e.g. 'A' or 'B', etc.
     % analysis: character vector, determines which batch function is found and where the data goes
-    % destination: character vector, the relative or absolute path to where the batch files should go
+    % location: character vector, the relative or absolute path to where the batch files should go
   % Outputs:
     % arg: n x 1 cell of character vectors, contains the matlab command to run the batchFunction
 
   % set up an input parser
   p = inputParser;
   p.CaseSensitive = false;
-  p.addParameter('experimenter', 'Caitlin', @ischar);
-  p.addParameter('alpha', 'A', @ischar);
-  p.addParameter('analysis', 'BandwidthEstimator', @ischar);
-  p.addParameter('destination', 'cluster/', @ischar);
+  p.addParameter('experimenter', [], @ischar);
+  p.addParameter('alpha', [], @ischar);
+  p.addParameter('analysis', [], @ischar);
+  p.addParameter('location', []);
   p.parse(varargin{:});
   experimenter  = p.Results.experimenter;
   alpha         = p.Results.alpha;
   analysis      = p.Results.analysis;
-  destination   = p.Results.destination;
+  location      = p.Results.location;
 
   % Good fortune on your adventure
   returnToCWD = pwd;
@@ -41,8 +41,12 @@ function arg = batchify(varargin)
   % remove all old files
   delete batch*
   % copy over the new function
-  copyfile(pathname, destination);
-  cd destination
+  copyfile(pathname, location);
+
+  % move to where the batch files should be saved
+  if ~isempty(location)
+    cd location
+  end
 
   % write the batch files
   arg = cell(length(filename), 1);
