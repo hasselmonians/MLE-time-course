@@ -36,7 +36,7 @@ function arg = batchify(varargin)
   end
 
   % writes the batch scripts based on a data file known only to god (and the experimenter)
-  [filename, cellnum] = RatCatcher.parse(experimenter, alpha);
+  [filename, cellnum] = RatCatcher.parse('experimenter', experimenter, 'alpha', alpha);
 
   % remove all old files
   delete batch*
