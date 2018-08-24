@@ -23,25 +23,31 @@ function dataTable = gather(location, analysis, namespec)
 
   % gather together all of the data points into a single matrix
   cd(location)
-  files   = dir([namespec '*']);
-  dim1    = length(files);
-  dim2    = length(csvread(files(1).name));
-  data    = NaN(dim1, dim2);
+  % find all of the files matching the namespec pattern
+  files     = dir([namespec '*']);
+  % acquire the outfiles
+  outfiles = cell(size(files));
+  for ii = 1:length(files)
+    outfiles{ii} = files(ii).name;
+  end
+  % sort the outfiles in a sensible manner
+  outfiles = RatCatcher.natsortfiles(outfiles);
+  % get the dimensions of the data
+  dim1      = length(outfiles);
+  dim2      = length(csvread(outfiles{1});
+  % read through the files and write the data to a matrix
+  data      = NaN(dim1, dim2);
   for ii = 1:dim1
-    data(ii, :) = csvread(files(ii).name);
+    data(ii, :) = csvread(outfiles{ii});
   end
 
   switch analysis
   case 'BandwidthEstimator'
     % gather the data from the output files
-    kmax = data(:, 1);
-    CI = data(:, 2:3);
-    filenames = cell(dim1, 1);
-    for ii = 1:dim1
-      filenames{ii} = files(ii).name;
-    end
+    kmax    = data(:, 1);
+    CI      = data(:, 2:3);
     % put the data in a MATLAB table
-    dataTable = table(filenames, kmax, CI);
+    dataTable = table(outfiles, kmax, CI);
   otherwise
     disp('[ERROR] I don''t know which analysis you mean.')
   end
