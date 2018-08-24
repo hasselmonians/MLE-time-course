@@ -2,11 +2,13 @@
 
 runLocal = true;
 
-arg = RatCatcher.batchify('experimenter', 'Caitlin', 'alpha', 'A', 'analysis', 'BandwidthEstimator', 'destination', 'cluster/');
-
+% generate batch files
+arg = RatCatcher.batchify('experimenter', 'Caitlin', 'alpha', 'A', 'analysis', 'BandwidthEstimator', 'location', '/home/ahoyland/code/MLE-time-course/cluster');
+return
+% run locally to test things
 if runLocal == true
   for ii = 1:length(arg)
-    strrep(arg, 'false', 'true');
+    arg = strrep(arg, 'false', 'true');
   end
   % create a parallel pool if it doesn't already exist
   pool = gcp;
@@ -21,3 +23,7 @@ if runLocal == true
   end
   disp(['[INFO] Done!'])
 end
+
+% gather the data
+dataTable = RatCatcher.gather('location', '/home/ahoyland/code/MLE-time-course/cluster', 'analysis', 'BandwidthEstimator', 'namespec', 'output-');
+dataTable = RatCatcher.stitch('experimenter', 'Caitlin', 'alpha', 'A', 'data', dataTable);
