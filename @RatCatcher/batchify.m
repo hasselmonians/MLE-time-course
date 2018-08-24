@@ -1,4 +1,4 @@
-function arg = batchify(varargin)
+function arg = batchify(self)
 
   % automatically generates batch files for mouse or rat data
   % Arguments:
@@ -13,20 +13,11 @@ function arg = batchify(varargin)
   % Outputs:
     % arg: n x 1 cell of character vectors, contains the matlab command to run the batchFunction
 
-  % set up an input parser
-  p = inputParser;
-  p.CaseSensitive = false;
-  p.addParameter('experimenter', [], @ischar);
-  p.addParameter('alpha', [], @ischar);
-  p.addParameter('analysis', [], @ischar);
-  p.addParameter('location', []);
-  p.addParameter('namespec', 'output', @ischar);
-  p.parse(varargin{:});
-  experimenter  = p.Results.experimenter;
-  alpha         = p.Results.alpha;
-  analysis      = p.Results.analysis;
-  location      = p.Results.location;
-  namespec      = p.Results.namespec;
+  experimenter  = self.experimenter;
+  alpha         = self.alpha;
+  analysis      = self.analysis;
+  location      = self.location;
+  namespec      = self.namespec;
 
   % Good fortune on your adventure
   returnToCWD = pwd;
@@ -40,7 +31,7 @@ function arg = batchify(varargin)
   end
 
   % writes the batch scripts based on a data file known only to god (and the experimenter)
-  [filename, cellnum] = RatCatcher.parse('experimenter', experimenter, 'alpha', alpha);
+  [filename, cellnum] = self.parse();
 
   % remove all old files
   delete batch*

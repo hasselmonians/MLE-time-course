@@ -1,4 +1,4 @@
-function [filename, cellnum] = parse(varargin)
+function [filename, cellnum] = parse(self)
   % parses the name of a datafile listed within cluster_info.mat
   % extracts the main section of the filename and the cell index
 
@@ -11,13 +11,8 @@ function [filename, cellnum] = parse(varargin)
     % filename: n x 1 cell, the parsed filenames for where the data are stored
     % cellnum: n x 2 double, the recording/cell indices corresponding to the filenames
 
-    p = inputParser;
-    p.CaseSensitive = false;
-    p.addParameter('experimenter', [], @ischar);
-    p.addParameter('alpha', [], @ischar);
-    p.parse(varargin{:});
-    experimenter  = p.Results.experimenter;
-    alpha         = p.Results.alpha;
+    experimenter  = self.experimenter;
+    alpha         = self.alpha;
 
   switch experimenter
   case 'Caitlin'

@@ -1,4 +1,4 @@
-function data = stitch(varargin)
+function data = stitch(self, data)
 
   % stitches parsed filenames and cell numbers into datasets
 
@@ -11,17 +11,10 @@ function data = stitch(varargin)
   % Outputs:
     % data: m x n+2 table, the data table
 
-    p = inputParser;
-    p.CaseSensitive = false;
-    p.addParameter('experimenter', [], @ischar);
-    p.addParameter('alpha', [], @ischar);
-    p.addParameter('data', []);
-    p.parse(varargin{:});
-    experimenter  = p.Results.experimenter;
-    alpha         = p.Results.alpha;
-    data          = p.Results.data;
+  experimenter  = self.experimenter;
+  alpha         = self.alpha;
 
-  [filenames, cellnums] = RatCatcher.parse('experimenter', experimenter, 'alpha', alpha);
+  [filenames, cellnums] = self.parse();
   data2 = table(filenames, cellnums);
   data = [data data2];
 

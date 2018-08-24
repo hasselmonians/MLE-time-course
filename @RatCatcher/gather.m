@@ -1,4 +1,4 @@
-function dataTable = gather(varargin)
+function dataTable = gather(self)
 
   % gathers up data from a series of output files
 
@@ -12,16 +12,9 @@ function dataTable = gather(varargin)
   % Outputs:
     % dataTable: m x n table, a MATLAB data table, specific to the analysis
 
-    % use the input parser
-    p = inputParser;
-    p.CaseSensitive = false;
-    p.addParameter('location', [], @ischar);
-    p.addParameter('analysis', [], @ischar);
-    p.addParameter('namespec', [], @ischar);
-    p.parse(varargin{:});
-    location = p.Results.location;
-    analysis = p.Results.analysis;
-    namespec = p.Results.namespec;
+    location = self.location;
+    analysis = self.analysis;
+    namespec = self.namespec;
 
   % assume that the output files are stored sensibly
   if isempty(namespec)
@@ -46,7 +39,7 @@ function dataTable = gather(varargin)
     outfiles{ii} = files(ii).name;
   end
   % sort the outfiles in a sensible manner
-  outfiles = RatCatcher.natsortfiles(outfiles);
+  outfiles = self.natsortfiles(outfiles);
   % get the dimensions of the data
   dim1      = length(outfiles);
   dim2      = length(csvread(outfiles{1}));

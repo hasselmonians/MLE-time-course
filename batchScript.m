@@ -9,14 +9,17 @@ for ii = 1:length(cluster_info_index)
     namespec(ii, :) = ['output-Caitlin-' cluster_info_index(ii)];
 end
 
+r = RatCatcher;
+r.experimenter  = 'Caitlin';
+r.alpha         = cluster_info_index(index);
+r.analysis      = 'BandwidthEstimator';
+r.location      = '/home/ahoyland/code/MLE-time-course/cluster';
+
 for index = 1:length(cluster_info_index)
 
-  experimenter  = 'Caitlin';
-  alpha         = cluster_info_index(index);
-  analysis      = 'BandwidthEstimator';
-  location      = '/home/ahoyland/code/MLE-time-course/cluster';
+  r.namespec = namespec(index, :);
 
-  arg = RatCatcher.batchify('experimenter', experimenter, 'alpha', alpha, 'analysis', analysis, 'location', location, 'namespec', namespec(index, :));
+  arg = r.batchify();
 
   % run locally to test things
   if runLocal == true
@@ -41,13 +44,15 @@ for index = 1:length(cluster_info_index)
 end
 
 % gather the data
-dataTable = RatCatcher.gather('location', location, 'analysis', analysis, 'namespec', namespec(1, :));
-dataTable = RatCatcher.stitch('experimenter', experimenter, 'alpha', cluster_info_index(1), 'data', dataTable);
+r.namespec = namespec(1, :);
+dataTable = r.gather();
+dataTable = r.stitch(dataTable);
 
 for ii = 2:length(cluster_info_index)
   % create a data table from the next run
-  dataTable2 = RatCatcher.gather('location', location, 'analysis', analysis, 'namespec', namespec(ii, :));
-  dataTable2 = RatCatcher.stitch('experimenter', experimenter, 'alpha', cluster_info_index(ii), 'data', dataTable2);
+  r.namespec = namespec(ii, :);
+  dataTable2 = r.gather();
+  dataTable2 = r.stitch(dataTable2);
   % add that data table to the total
   dataTable = [dataTable dataTable2];
 end
