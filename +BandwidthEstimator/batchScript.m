@@ -4,9 +4,10 @@ runLocal = true;
 
 % generate batch files
 arg = RatCatcher.batchify('experimenter', 'Caitlin', 'alpha', 'A', 'analysis', 'BandwidthEstimator', 'location', '/home/ahoyland/code/MLE-time-course/cluster');
-return
+
 % run locally to test things
 if runLocal == true
+  % run only as a test (i.e. do not add to the path)
   for ii = 1:length(arg)
     arg = strrep(arg, 'false', 'true');
   end
