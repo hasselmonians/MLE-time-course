@@ -6,6 +6,8 @@ function arg = batchify(experimenter, alpha)
     % alpha: the alphanumeric identifier for the experimentalist's data
     % for experimenter = 'Caitlin', this should be an ID from cluster_info.mat
     % e.g. 'A' or 'B', etc.
+  % Outputs:
+    % arg: n x 1 cell of character vectors, contains the matlab command to run the batchFunction
 
   % run this from BandwidthEstimator/
   cwd = pwd;
