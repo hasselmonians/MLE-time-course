@@ -1,4 +1,4 @@
-function arg = batchify(experimenter, alpha, analysis, destination)
+function arg = batchify(varargin)
 
   % automatically generates batch files for mouse or rat data
   % Arguments:
@@ -17,7 +17,7 @@ function arg = batchify(experimenter, alpha, analysis, destination)
   p.addParameter('alpha', 'A', @ischar);
   p.addParameter('analysis', 'BandwidthEstimator', @ischar);
   p.addParameter('destination', 'cluster/', @ischar);
-  p.parse;
+  p.parse(varargin{:});
   experimenter  = p.Results.experimenter;
   alpha         = p.Results.alpha;
   analysis      = p.Results.analysis;
