@@ -1,4 +1,4 @@
-function dataTable = gather(location, analysis, namespec)
+function dataTable = gather(varargin)
 
   % gathers up data from a series of output files
 
@@ -12,17 +12,32 @@ function dataTable = gather(location, analysis, namespec)
   % Outputs:
     % dataTable: m x n table, a MATLAB data table, specific to the analysis
 
-  % set out for an epic journey, but always remember your home
-  returnToCWD = pwd;
+    % use the input parser
+    p = inputParser;
+    p.CaseSensitive = false;
+    p.addParameter('location', [], @ischar);
+    p.addParameter('analysis', [], @ischar);
+    p.addParameter('namespec', [], @ischar);
+    p.parse(varargin{:});
+    location = p.Results.location;
+    analysis = p.Results.analysis;
+    namespec = p.Results.namespec;
 
   % assume that the output files are stored sensibly
-  if nargin < 2
+  if isempty(namespec)
     namespec = 'output-';
     disp('[INFO] Assuming namespec is ''output-''')
   end
 
+  % set out for an epic journey, but always remember your home
+  returnToCWD = pwd;
+
+  % move to where the output files are stored
+  if ~isempty(location)
+    cd(location)
+  end
+
   % gather together all of the data points into a single matrix
-  cd(location)
   % find all of the files matching the namespec pattern
   files     = dir([namespec '*']);
   % acquire the outfiles
@@ -34,7 +49,7 @@ function dataTable = gather(location, analysis, namespec)
   outfiles = RatCatcher.natsortfiles(outfiles);
   % get the dimensions of the data
   dim1      = length(outfiles);
-  dim2      = length(csvread(outfiles{1});
+  dim2      = length(csvread(outfiles{1}));
   % read through the files and write the data to a matrix
   data      = NaN(dim1, dim2);
   for ii = 1:dim1
