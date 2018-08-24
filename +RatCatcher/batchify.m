@@ -1,6 +1,10 @@
-function batchify(experimenter, alpha, pathname)
+function arg = batchify(experimenter, alpha, pathname)
 
-% run this from BandwidthEstimator/
+  % run this from BandwidthEstimator/
+  cwd = pwd;
+  if strcmp(cwd(end-6:end), 'cluster')
+    cd ..
+  end
 
   % writes the batch scripts
   [filename, cellnum] = RatCatcher.parse(experimenter, alpha);
@@ -12,6 +16,7 @@ function batchify(experimenter, alpha, pathname)
   cd cluster/
 
   % write the batch files
+  arg = cell(length(filename), 1);
   for ii = 1:length(filename)
     outfile = ['output-' num2str(ii) '.csv'];
     csvwrite(outfile, []);
@@ -20,7 +25,8 @@ function batchify(experimenter, alpha, pathname)
     fprintf(fileID, '#!/bin/csh\n');
     fprintf(fileID, 'module load matlab/2017a\n');
     fprintf(fileID, '#$ -l h_rt=72:00:00\n');
-    fprintf(fileID, ['matlab -nodisplay -r "batchFunction(''' filename{ii} ''', [' num2str(cellnum(ii, 1)) ' ' num2str(cellnum(ii, 2)) '], ''' outfile ''', false); exit"']);
+    arg{ii} = ['batchFunction(''' filename{ii} ''', [' num2str(cellnum(ii, 1)) ' ' num2str(cellnum(ii, 2)) '], ''' outfile ''', false);'];
+    fprintf(fileID, ['matlab -nodisplay -r "' arg{ii} ' exit;"']);
     fclose(fileID);
   end
 
