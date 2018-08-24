@@ -45,7 +45,7 @@ function arg = batchify(varargin)
 
   % move to where the batch files should be saved
   if ~isempty(location)
-    cd location
+    cd(location)
   end
 
   % write the batch files
@@ -58,7 +58,7 @@ function arg = batchify(varargin)
     fprintf(fileID, '#!/bin/csh\n');
     fprintf(fileID, 'module load matlab/2017a\n');
     fprintf(fileID, '#$ -l h_rt=72:00:00\n');
-    arg{ii} = [analysis '.batchFunction(''' filename{ii} ''', [' num2str(cellnum(ii, 1)) ' ' num2str(cellnum(ii, 2)) '], ''' outfile ''', false);'];
+    arg{ii} = ['batchFunction(''' filename{ii} ''', [' num2str(cellnum(ii, 1)) ' ' num2str(cellnum(ii, 2)) '], ''' location '/' outfile ''', false);'];
     fprintf(fileID, ['matlab -nodisplay -r "' arg{ii} ' exit;"']);
     fclose(fileID);
   end
