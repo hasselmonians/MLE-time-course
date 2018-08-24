@@ -1,4 +1,11 @@
-function arg = batchify(experimenter, alpha, pathname)
+function arg = batchify(experimenter, alpha)
+
+  % automatically generates batch files for mouse or rat data
+  % Arguments:
+    % experimenter: expects either 'Holger' or 'Caitlin'
+    % alpha: the alphanumeric identifier for the experimentalist's data
+    % for experimenter = 'Caitlin', this should be an ID from cluster_info.mat
+    % e.g. 'A' or 'B', etc.
 
   % run this from BandwidthEstimator/
   cwd = pwd;
