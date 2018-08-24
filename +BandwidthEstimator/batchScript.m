@@ -2,7 +2,7 @@
 
 runLocal = true;
 
-arg = RatCatcher.batchify('Caitlin', 'A');
+arg = RatCatcher.batchify('experimenter', 'Caitlin', 'alpha', 'A', 'analysis', 'BandwidthEstimator', 'destination', 'cluster/');
 
 if runLocal == true
   for ii = 1:length(arg)

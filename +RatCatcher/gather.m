@@ -12,6 +12,7 @@ function dataTable = gather(location, analysis, namespec)
   % Outputs:
     % dataTable: m x n table, a MATLAB data table, specific to the analysis
 
+  % set out for an epic journey, but always remember your home
   returnToCWD = pwd;
 
   % assume that the output files are stored sensibly
@@ -24,7 +25,7 @@ function dataTable = gather(location, analysis, namespec)
   cd(location)
   files   = dir([namespec '*']);
   dim1    = length(files);
-  dim2    = size(csvread(files(1).name));
+  dim2    = length(csvread(files(1).name));
   data    = NaN(dim1, dim2);
   for ii = 1:dim1
     data(ii, :) = csvread(files(ii).name);
@@ -45,6 +46,7 @@ function dataTable = gather(location, analysis, namespec)
     disp('[ERROR] I don''t know which analysis you mean.')
   end
 
-
+  % return from whence you came
+  cd(returnToCWD)
 
 end % function

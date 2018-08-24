@@ -1,4 +1,4 @@
-function arg = batchify(experimenter, alpha)
+function arg = batchify(experimenter, alpha, analysis, destination)
 
   % automatically generates batch files for mouse or rat data
   % Arguments:
@@ -6,23 +6,42 @@ function arg = batchify(experimenter, alpha)
     % alpha: the alphanumeric identifier for the experimentalist's data
     % for experimenter = 'Caitlin', this should be an ID from cluster_info.mat
     % e.g. 'A' or 'B', etc.
+    % analysis: character vector, determines which batch function is found and where the data goes
+    % destination: character vector, the relative or absolute path to where the batch files should go
   % Outputs:
     % arg: n x 1 cell of character vectors, contains the matlab command to run the batchFunction
 
-  % run this from BandwidthEstimator/
-  cwd = pwd;
-  if strcmp(cwd(end-6:end), 'cluster')
-    cd ..
+  % set up an input parser
+  p = inputParser;
+  p.addParameter('experimenter', 'Caitlin', @ischar);
+  p.addParameter('alpha', 'A', @ischar);
+  p.addParameter('analysis', 'BandwidthEstimator', @ischar);
+  p.addParameter('destination', 'cluster/', @ischar);
+  p.parse;
+  experimenter  = p.Results.experimenter;
+  alpha         = p.Results.alpha;
+  analysis      = p.Results.analysis;
+  destination   = p.Results.destination;
+
+  % Good fortune on your adventure
+  returnToCWD = pwd;
+
+  % find the path to the analysis batch function
+  try
+    pathname = which([analysis '.batchFunction']);
+    pathname = pathname(1:end-15);
+  catch
+    disp('[ERROR] I don''t know which analysis you mean.')
   end
 
-  % writes the batch scripts
+  % writes the batch scripts based on a data file known only to god (and the experimenter)
   [filename, cellnum] = RatCatcher.parse(experimenter, alpha);
 
   % remove all old files
   delete batch*
   % copy over the new function
-  copyfile +BandwidthEstimator/batchFunction.m cluster/
-  cd cluster/
+  copyfile(pathname, destination);
+  cd destination
 
   % write the batch files
   arg = cell(length(filename), 1);
@@ -34,7 +53,7 @@ function arg = batchify(experimenter, alpha)
     fprintf(fileID, '#!/bin/csh\n');
     fprintf(fileID, 'module load matlab/2017a\n');
     fprintf(fileID, '#$ -l h_rt=72:00:00\n');
-    arg{ii} = ['batchFunction(''' filename{ii} ''', [' num2str(cellnum(ii, 1)) ' ' num2str(cellnum(ii, 2)) '], ''' outfile ''', false);'];
+    arg{ii} = [analysis '.batchFunction(''' filename{ii} ''', [' num2str(cellnum(ii, 1)) ' ' num2str(cellnum(ii, 2)) '], ''' outfile ''', false);'];
     fprintf(fileID, ['matlab -nodisplay -r "' arg{ii} ' exit;"']);
     fclose(fileID);
   end
@@ -47,5 +66,8 @@ function arg = batchify(experimenter, alpha)
     fprintf(fileID, ['qsub -pe omp 16 -o ' log ' -e ' err ' -P ' 'hasselmogrp ' './batch-' num2str(ii) '\n']);
   end
   fclose(fileID);
+
+  % Brave traveler, you may rest now, once more before the hearth of your home
+  cd(returnToCWD);
 
 end % function
