@@ -12,7 +12,6 @@ if runLocal == true
   pool = gcp;
   % run each of the scripts in the batch files
   for ii = 1:length(arg)
-    textbar(ii, length(arg), '\n');
     disp(['[INFO]' arg{ii} '\n']);
     eval(arg{ii});
   end
