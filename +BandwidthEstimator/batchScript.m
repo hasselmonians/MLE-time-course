@@ -13,6 +13,11 @@ if runLocal == true
   % run each of the scripts in the batch files
   for ii = 1:length(arg)
     disp(['[INFO] ' arg{ii}]);
-    eval(arg{ii});
+    try
+      eval(arg{ii});
+    catch err
+      disp(['[ERROR] ' err.identifier])
+    end
   end
+  disp(['[INFO] Done!'])
 end
