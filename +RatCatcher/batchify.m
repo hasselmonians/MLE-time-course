@@ -13,6 +13,7 @@ function arg = batchify(varargin)
 
   % set up an input parser
   p = inputParser;
+  p.CaseSensitive = false;
   p.addParameter('experimenter', 'Caitlin', @ischar);
   p.addParameter('alpha', 'A', @ischar);
   p.addParameter('analysis', 'BandwidthEstimator', @ischar);
