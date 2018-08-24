@@ -27,6 +27,6 @@ function batchFunction(filename, cellnum, outfile, test)
   [estimate, kmax, loglikelihoods, bandwidths, CI] = BandwidthEstimator.cvKernel(root, spikeTrain, range, true);
 
   % save the data
-  csvwrite(outfile, [kmax CI]);
+  csvwrite(outfile, [kmax*(1/root.fs_video) CI]);
 
 end % function
