@@ -21,7 +21,7 @@ function data = stitch(varargin)
     alpha         = p.Results.alpha;
     data          = p.Results.data;
 
-  [filenames, cellnums] = RatCatcher.parse(experimenter, alpha);
+  [filenames, cellnums] = RatCatcher.parse('experimenter', experimenter, 'alpha', alpha);
   data2 = table(filenames, cellnums);
   data = [data data2];
 
