@@ -1,15 +1,15 @@
 function batchify(experimenter, alpha, pathname)
 
-  directory = pwd;
-  if ~strcmp(directory(end-6:end), 'cluster')
-    error('Error. Not in cluster/ directory. Aborting.')
-  end
+% run this from BandwidthEstimator/
 
   % writes the batch scripts
   [filename, cellnum] = RatCatcher.parse(experimenter, alpha);
 
   % remove all old files
   delete batch*
+  % copy over the new function
+  copyfile +BandwidthEstimator/batchFunction.m cluster/
+  cd cluster/
 
   % write the batch files
   for ii = 1:length(filename)
@@ -25,7 +25,7 @@ function batchify(experimenter, alpha, pathname)
   end
 
   % add a qsub file
-  fileID = fopen('batchfile.sh', 'w');
+  fileID = fopen('batchFile.sh', 'w');
   log = '/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster/log/';
   err = '/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster/err/';
   for ii = 1:length(filename)
