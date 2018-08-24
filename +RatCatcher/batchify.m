@@ -8,6 +8,8 @@ function arg = batchify(varargin)
     % e.g. 'A' or 'B', etc.
     % analysis: character vector, determines which batch function is found and where the data goes
     % location: character vector, the relative or absolute path to where the batch files should go
+    % outfilepath: character vector, determines what the output files should be called
+    % they take the form "outfilepath-#.csv"
   % Outputs:
     % arg: n x 1 cell of character vectors, contains the matlab command to run the batchFunction
 
@@ -18,11 +20,13 @@ function arg = batchify(varargin)
   p.addParameter('alpha', [], @ischar);
   p.addParameter('analysis', [], @ischar);
   p.addParameter('location', []);
+  p.addParameter('outfilepath', 'output', @ischar);
   p.parse(varargin{:});
   experimenter  = p.Results.experimenter;
   alpha         = p.Results.alpha;
   analysis      = p.Results.analysis;
   location      = p.Results.location;
+  outfilepath   = p.Results.outfilepath;
 
   % Good fortune on your adventure
   returnToCWD = pwd;
@@ -51,7 +55,7 @@ function arg = batchify(varargin)
   % write the batch files
   arg = cell(length(filename), 1);
   for ii = 1:length(filename)
-    outfile = ['output-' num2str(ii) '.csv'];
+    outfile = [outfilepath '-' num2str(ii) '.csv'];
     csvwrite(outfile, []);
     infile = ['batch-' num2str(ii)];
     fileID  = fopen(infile, 'w');
