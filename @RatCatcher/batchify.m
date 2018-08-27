@@ -34,7 +34,7 @@ function arg = batchify(self)
   [filename, cellnum] = self.parse();
 
   % remove all old files
-  delete batch*
+  delete([location filesep 'batch*']);
   % copy over the new function
   copyfile(pathname, location);
 
