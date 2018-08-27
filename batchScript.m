@@ -4,14 +4,14 @@ runLocal = true;
 
 % generate batch files for clusters A-F, simulate and save
 
-cluster_info_index = ['A' 'B' 'C' 'D' 'E' 'F'];
+cluster_info_index = {'A' 'B' 'C' 'D' 'E' 'F'};
 for ii = 1:length(cluster_info_index)
-    namespec(ii, :) = ['output-Caitlin-' cluster_info_index(ii)];
+    namespec(ii, :) = ['output-Caitlin-' cluster_info_index{ii}];
 end
 
 r = RatCatcher;
 r.experimenter  = 'Caitlin';
-r.alpha         = cluster_info_index(index);
+r.alpha         = cluster_info_index;
 r.analysis      = 'BandwidthEstimator';
 r.location      = '/home/ahoyland/code/MLE-time-course/cluster';
 
@@ -44,17 +44,8 @@ for index = 1:length(cluster_info_index)
 end
 
 % gather the data
-r.namespec = namespec(1, :);
+r.namespec = 'output-';
 dataTable = r.gather();
 dataTable = r.stitch(dataTable);
-
-for ii = 2:length(cluster_info_index)
-  % create a data table from the next run
-  r.namespec = namespec(ii, :);
-  dataTable2 = r.gather();
-  dataTable2 = r.stitch(dataTable2);
-  % add that data table to the total
-  dataTable = [dataTable dataTable2];
-end
 
 save('/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin.mat', 'dataTable');
