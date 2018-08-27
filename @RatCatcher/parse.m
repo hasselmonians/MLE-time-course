@@ -72,7 +72,7 @@ function [filename, cellnum] = parse_core(experimenter, alpha)
       filename      = strrep(filename, old{ii}, new{ii});
     end
     for ii = 1:length(filename)
-      filename{ii}  = ['/projectnb/hasselmogrp/hoyland/data/caitlin/' filename{ii} '.mat'];
+      filename{ii}  = ['/projectnb/hasselmogrp/hoyland/data/caitlin/raw/' filename{ii} '.mat'];
     end
 
     % parse the cellnum
