@@ -11,9 +11,6 @@ function data = stitch(self, data)
   % Outputs:
     % data: m x n+2 table, the data table
 
-  experimenter  = self.experimenter;
-  alpha         = self.alpha;
-
   [filenames, cellnums] = self.parse();
   data2 = table(filenames, cellnums);
   data = [data data2];

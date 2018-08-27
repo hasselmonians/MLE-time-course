@@ -20,3 +20,5 @@ methods (Static)
   [X,ndx,dbg] = natsortfiles(X,varargin)
 
 end % static methods
+
+end % classdef
