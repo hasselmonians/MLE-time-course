@@ -9,7 +9,7 @@ function arg = batchify(self)
     % analysis: character vector, determines which batch function is found and where the data goes
     % location: character vector, the relative or absolute path to where the batch files should go
     % namespec: character vector, determines what the output files should be called
-    % they take the form "outfilepath-#.csv"
+    % they take the form "namespec-#.csv"
   % Outputs:
     % arg: n x 1 cell of character vectors, contains the matlab command to run the batchFunction
 
