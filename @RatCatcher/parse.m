@@ -16,14 +16,14 @@ function [filename, cellnum] = parse(self)
     alpha         = self.alpha;
 
     if iscell(alpha)
-      if ~iscalar(alpha)
+      if ~isscalar(alpha)
         % if alpha is a cell array
         [filename, cellnum] = parse_core(experimenter, alpha{1});
         for ii = 2:length(alpha)
           % iterate through the parsing and append the results
           [filename0, cellnum0] = parse_core(experimenter, alpha{ii});
-          filename  = [filename filename0];
-          cellnum   = [cellnum cellnum0];
+          filename  = [filename; filename0];
+          cellnum   = [cellnum; cellnum0];
         end
       else
         % if alpha is a scalar cell
