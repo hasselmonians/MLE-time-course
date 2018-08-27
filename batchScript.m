@@ -17,6 +17,7 @@ r.location      = '/home/ahoyland/code/MLE-time-course/cluster';
 
 for index = 1:length(cluster_info_index)
 
+  r.alpha = cluster_info_index{index};
   r.namespec = namespec(index, :);
 
   arg = r.batchify();
