@@ -21,7 +21,7 @@ function batchFunction(filename, cellnum, outfile, test)
   spikeTrain = BandwidthEstimator.getSpikeTrain(root);
 
   % test bandwidths up to 1 minute
-  range = 3:2:(60*root.fs_video);
+  range = 3:2:(120*root.fs_video);
 
   % perform leave-one-out cross-validation maximum likelihood of frequency estimate
   [estimate, kmax, loglikelihoods, bandwidths, CI] = BandwidthEstimator.cvKernel(root, spikeTrain, range, true);
