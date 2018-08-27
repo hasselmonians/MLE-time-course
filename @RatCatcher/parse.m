@@ -3,17 +3,42 @@ function [filename, cellnum] = parse(self)
   % extracts the main section of the filename and the cell index
 
   % Arguments:
-    % experimenter: expects either 'Caitlin' or 'Holger'
-    % alpha: the alphanumeric identifier for the experimentalist's data
-    % for experimenter = 'Caitlin', this should be an ID from cluster_info.mat
-    % e.g. 'A' or 'B', etc.
+    % expects a fully-specified RatCatcher object
   % Outputs:
     % filename: n x 1 cell, the parsed filenames for where the data are stored
     % cellnum: n x 2 double, the recording/cell indices corresponding to the filenames
 
+  % if self.alpha is a character vector, run this function once
+  % if self.alpha is a cell array, run this function iteratively
+  % and append the results to the output
+
     experimenter  = self.experimenter;
     alpha         = self.alpha;
 
+    if iscell(alpha)
+      if ~iscalar(alpha)
+        % if alpha is a cell array
+        [filename, cellnum] = parse_core(experimenter, alpha{1});
+        for ii = 2:length(alpha)
+          % iterate through the parsing and append the results
+          [filename0, cellnum0] = parse_core(experimenter, alpha{ii});
+          filename  = [filename filename0];
+          cellnum   = [cellnum cellnum0];
+        end
+      else
+        % if alpha is a scalar cell
+        [filename, cellnum] = parse_core(experimenter, alpha{1});
+      end
+    else
+      % alpha should be a character vector
+      [filename, cellnum] = parse_core(experimenter, alpha);
+    end
+
+end % function
+
+function [filename, cellnum] = parse_core(experimenter, alpha)
+  % accepts an experimenter and alpha just like parse; performs the core function
+  % parse calls this function a number of times depending on its inputs
   switch experimenter
   case 'Caitlin'
     % load the cluster info file
