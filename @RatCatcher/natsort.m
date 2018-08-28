@@ -73,7 +73,7 @@ function [X,ndx,dbg] = natsort(X,xpr,varargin) %#ok<*SPERR>
 % by the SSCANF format. The rows of <dbg> are linearly indexed from <X>:
 %
 % [~,~,dbg] = natsort(X)
-% dbg = 
+% dbg =
 %    'x'    [ 2]
 %    'x'    [10]
 %    'x'    [ 1]

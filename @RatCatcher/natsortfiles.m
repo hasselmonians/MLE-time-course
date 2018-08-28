@@ -136,11 +136,11 @@ vec{numel(len)} = [];
 %
 % Natural-order sort of the file extensions and filenames:
 if nargout<3 % faster:
-	[~,ndx] = natsort(ext,varargin{:});
-	[~,ids] = natsort(fnm(ndx),varargin{:});
+	[~,ndx] = RatCatcher.natsort(ext,varargin{:});
+	[~,ids] = RatCatcher.natsort(fnm(ndx),varargin{:});
 else % for debugging:
-	[~,ndx,dbg{num+2}] = natsort(ext,varargin{:});
-	[~,ids,tmp] = natsort(fnm(ndx),varargin{:});
+	[~,ndx,dbg{num+2}] = RatCatcher.natsort(ext,varargin{:});
+	[~,ids,tmp] = RatCatcher.natsort(fnm(ndx),varargin{:});
 	[~,idd] = sort(ndx);
 	dbg{num+1} = tmp(idd,:);
 end
@@ -152,9 +152,9 @@ for k = num:-1:1
 	vec(:) = {''};
 	vec(idx) = cellfun(@(c)c(k),pth(idx));
 	if nargout<3 % faster:
-		[~,ids] = natsort(vec(ndx),varargin{:});
+		[~,ids] = RatCatcher.natsort(vec(ndx),varargin{:});
 	else % for debugging:
-		[~,ids,tmp] = natsort(vec(ndx),varargin{:});
+		[~,ids,tmp] = RatCatcher.natsort(vec(ndx),varargin{:});
 		[~,idd] = sort(ndx);
 		dbg{k} = tmp(idd,:);
 	end
