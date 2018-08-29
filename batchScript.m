@@ -45,6 +45,7 @@ for index = 1:length(cluster_info_index)
 end
 
 % gather the data
+r.alpha   = {'A', 'B', 'C', 'D', 'E', 'F'};
 r.namespec = 'output-';
 dataTable = r.gather();
 dataTable = r.stitch(dataTable);
