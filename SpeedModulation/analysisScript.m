@@ -47,7 +47,7 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
 
     % update the output vectors
     Pearson(ii) = R(2);
-    pValue(ii)  = P;
+    pValue(ii)  = P(1);
     % if delay is positive, frequency lags behind speed
     delay(ii)   = D / best.Fs; % seconds
   end
