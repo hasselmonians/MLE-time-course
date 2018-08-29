@@ -16,14 +16,15 @@ tic
 % load the bandwidth data
 load('BandwidthEstimator-Caitlin.mat'); % dataTable
 if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
-  Pearson       = zeros(length(dataTable), 1);
-  pValue        = zeros(length(dataTable), 1);
-  delay         = zeros(length(dataTable), 1);
-  for ii = 1:size(dataTable, 1)
-    textbar(ii, size(dataTable, 1))
+  Pearson       = zeros(height(dataTable), 1);
+  pValue        = zeros(height(dataTable), 1);
+  delay         = zeros(height(dataTable), 1);
+  for ii = 1:height(dataTable)
+    textbar(ii, height(dataTable))
 
     % load the Session object associated with these data
     load(dataTable.filenames{ii})
+    root.cel = dataTable.cellnums(ii, :);
     % set the start time to zero
     root        = root.FixTime;
     % clear the velocity
@@ -36,11 +37,12 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
     % set up the bandwidth estimator object
     best        = BandwidthEstimator(root);
     % filter the data according to the optimal bandwidth parameter
-    frequency   = best.getFiringRate(dataTable.kmax(ii));
+    bandwidth   = round(best.Fs * dataTable.kmax(ii)); % in time-steps
+    frequency   = best.getFiringRate(bandwidth);
 
     % find the Pearson correlation and time delay between the signals in seconds
     % this method uses the cross-correlation
-    [S1, S2, D] = alignsignals(speed, frequency)
+    [S1, S2, D] = alignsignals(speed, frequency, [], 'truncate');
     [R, P]      = corrcoef(S1, S2, 'alpha', 0.05);
 
     % update the output vectors
@@ -49,11 +51,15 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
     % if delay is positive, frequency lags behind speed
     delay(ii)   = D / best.Fs; % seconds
   end
-
+  return
   data2         = table(Pearson, pValue, delay);
   dataTable     = [dataTable data];
-end
 
+  % save the data
+  filepath      = which('BandwidthEstimator-Caitlin.mat');
+  save(filepath, 'dataTable');
+end
+return
 if being_published
 	snapnow
 	delete(gcf)
