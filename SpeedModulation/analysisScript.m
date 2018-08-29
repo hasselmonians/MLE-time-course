@@ -58,20 +58,52 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
   filepath      = which('BandwidthEstimator-Caitlin.mat');
   save(filepath, 'dataTable');
 end
-return
+
+
+%% Distribution of Bandwidth Parameters
+% The best-estimate bandwidth parameters were computed using the Prerau & Eden algorithm for maximum-likelihood estimate with leave-one-out cross-validation. These values contrast with the standard in the literature of $k = 0.125$ s.
+
+
+% distribution of MLE/CV bandwidth parameters
+figure;
+hist(dataTable.kmax, 30)
+xlabel('bandwidth (s)')
+ylabel('count')
+title('distribution of MLE/CV bandwidth parameters')
+
+prettyFig()
+box(gca, 'off')
+
 if being_published
 	snapnow
 	delete(gcf)
 end
 
+
+%% Distribution of Delays Between Animal Speed and Firing Rate
+% Phase delays were computed by aligning the animal speed and firing rate signals using the peak cross-correlation and reported in seconds. A positive phase delay means that the firing rate lags behind the animal speed. Inversely, a negative phase delay means that the firing rate anticipates the animal speed.
+
+
+figure;
+hist(dataTable.delay, 30)
+xlabel('phase delay (s)')
+ylabel('count')
+title('distribution of phase delays from firing rate to animal speed')
+
+prettyFig()
+box(gca, 'off')
+
+
 %% Version Info
 % The file that generated this document is called:
 disp(mfilename)
+
 
 %%
 % and its md5 hash is:
 Opt.Input = 'file';
 disp(dataHash(strcat(mfilename,'.m'),Opt))
+
 
 %%
 % This file should be in this commit:
@@ -82,9 +114,11 @@ end
 
 t = toc;
 
+
 %%
 % This file has the following external dependencies:
 showDependencyHash(mfilename);
+
 
 %%
 % This document was built in:
