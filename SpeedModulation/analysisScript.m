@@ -51,9 +51,8 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
     % if delay is positive, frequency lags behind speed
     delay(ii)   = D / best.Fs; % seconds
   end
-  return
   data2         = table(Pearson, pValue, delay);
-  dataTable     = [dataTable data];
+  dataTable     = [dataTable data2];
 
   % save the data
   filepath      = which('BandwidthEstimator-Caitlin.mat');
