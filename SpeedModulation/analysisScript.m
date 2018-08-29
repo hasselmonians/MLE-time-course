@@ -19,6 +19,7 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
   Pearson       = zeros(height(dataTable), 1);
   pValue        = zeros(height(dataTable), 1);
   delay         = zeros(height(dataTable), 1);
+  meanFiringRate= zeros(height(dataTable), 1);
   for ii = 1:height(dataTable)
     textbar(ii, height(dataTable))
 
@@ -40,6 +41,9 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
     bandwidth   = round(best.Fs * dataTable.kmax(ii)); % in time-steps
     frequency   = best.getFiringRate(bandwidth);
 
+    % compute the mean firing rate
+    meanFiringRate(ii) = length(best.spikeTimes)/length(best.timestamps);
+
     % find the Pearson correlation and time delay between the signals in seconds
     % this method uses the cross-correlation
     [S1, S2, D] = alignsignals(speed, frequency, [], 'truncate');
@@ -51,7 +55,7 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
     % if delay is positive, frequency lags behind speed
     delay(ii)   = D / best.Fs; % seconds
   end
-  data2         = table(Pearson, pValue, delay);
+  data2         = table(meanFiringRate, Pearson, pValue, delay);
   dataTable     = [dataTable data2];
 
   % save the data
@@ -62,6 +66,12 @@ end
 
 %% Distribution of Bandwidth Parameters
 % The best-estimate bandwidth parameters were computed using the Prerau & Eden algorithm for maximum-likelihood estimate with leave-one-out cross-validation. These values contrast with the standard in the literature of $k = 0.125$ s.
+
+mean(dataTable.kmax(dataTable.kmax < 40))
+std(dataTable.kmax(dataTable.kmax < 40))
+100*sum(dataTable.kmax > 40)/length(dataTable.kmax)
+
+% 3.96 percent of recordings have MLE/CV bandwidth estimates above 40 s. These analyses have been discarded as outliers. Of the cells with best-estimate bandwidth parameters < 40 s, the mean bandwidth is 6.44 +/- 5.44 s. The smallest best-estimate bandwidth parameter is 0.63 s.
 
 
 % distribution of MLE/CV bandwidth parameters
