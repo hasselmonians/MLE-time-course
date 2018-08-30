@@ -15,14 +15,14 @@ tic
 
 % load the bandwidth data
 load('BandwidthEstimator-Caitlin.mat'); % dataTable
-speed       = cell(height(dataTable), 1); % time series of animal speed
-frequency   = cell(height(dataTable), 1); % time series of firing rate
-transfer    = cell(height(dataTable), 1); % time series of the transfer function between speed and frequency
 if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
   Pearson       = zeros(height(dataTable), 1);
   pValue        = zeros(height(dataTable), 1);
   delay         = zeros(height(dataTable), 1);
   meanFiringRate= zeros(height(dataTable), 1);
+  speed         = cell(height(dataTable), 1); % time series of animal speed
+  frequency     = cell(height(dataTable), 1); % time series of firing rate
+  transfer      = cell(height(dataTable), 1); % time series of the transfer function between speed and frequency
   for ii = 1:height(dataTable)
     textbar(ii, height(dataTable))
 
@@ -55,7 +55,6 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
     % compute the estimated transfer function between speed and frequency
     % using Welch's method (power spectra)
     transfer{ii}  = tfestimate(speed{ii}, frequency{ii}, [], [], [], best.Fs);
-    
     % update the output vectors
     Pearson(ii)   = R(2);
     pValue(ii)    = P(1);
@@ -67,7 +66,7 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
 
   % save the data
   filepath        = which('BandwidthEstimator-Caitlin.mat');
-  save(filepath, 'dataTable');
+  save(filepath, 'dataTable', 'speed', 'frequency', 'transfer');
 end
 
 return;
