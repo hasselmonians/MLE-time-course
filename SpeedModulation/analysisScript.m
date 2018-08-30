@@ -154,6 +154,9 @@ xlabel('bandwidth (s)')
 ylabel('count')
 title('distribution of XC bandwidth parameters')
 
+prettyFig()
+box(gca, 'off')
+
 if being_published
 	snapnow
 	delete(gcf)
@@ -166,6 +169,9 @@ hist(bandwidth_difference, 30);
 xlabel('normalized bandwidth difference')
 ylabel('count')
 title('distribution of difference between MLE/CV and XC bandwidth parameters')
+
+prettyFig()
+box(gca, 'off')
 
 if being_published
   snapnow
