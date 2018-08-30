@@ -67,12 +67,45 @@ end
 %% Distribution of Bandwidth Parameters
 % The best-estimate bandwidth parameters were computed using the Prerau & Eden algorithm for maximum-likelihood estimate with leave-one-out cross-validation. These values contrast with the standard in the literature of $k = 0.125$ s.
 
-mean(dataTable.kmax(dataTable.kmax < 40))
-std(dataTable.kmax(dataTable.kmax < 40))
-100*sum(dataTable.kmax > 40)/length(dataTable.kmax)
+passing = dataTable.kmax < 40;
+mean(dataTable.kmax(passing))
+std(dataTable.kmax(passing))
+100*sum(~passing)/length(dataTable.kmax)
 
-% 3.96 percent of recordings have MLE/CV bandwidth estimates above 40 s. These analyses have been discarded as outliers. Of the cells with best-estimate bandwidth parameters < 40 s, the mean bandwidth is 6.44 +/- 5.44 s. The smallest best-estimate bandwidth parameter is 0.63 s.
+% 3.46 percent of recordings have MLE/CV bandwidth estimates above 40 s. These analyses have been discarded as outliers. Of the cells with best-estimate bandwidth parameters < 40 s, the mean bandwidth is 6.53 +/- 5.56 s. The smallest best-estimate bandwidth parameter is 0.63 s.
 
+
+% distribution of mean firing rates based on best-estimate bandwidths
+figure;
+plot(dataTable.kmax, 50*dataTable.meanFiringRate, 'o')
+xlabel('MLE/CV bandwidth parameter (s)')
+ylabel('mean firing rate (Hz)')
+title('mean firing rate by best bandwidth parameter')
+
+prettyFig()
+box(gca, 'off')
+
+if being_published
+	snapnow
+	delete(gcf)
+end
+
+% mean firing rate by bandwidth bin
+figure;
+data2plot = 50*[mean(dataTable.meanFiringRate(passing)) mean(dataTable.meanFiringRate(~passing))];
+err2plot  = 50*[std(dataTable.meanFiringRate(passing)) std(dataTable.meanFiringRate(~passing))];
+barwitherr(err2plot, data2plot);
+set(gca, 'XTickLabel', {'k \leq 40 s', 'k > 40 s'})
+ylabel('mean firing rate (Hz)')
+title('mean firing rate by bandwidth category')
+
+prettyFig()
+box(gca, 'off')
+
+if being_published
+  snapnow
+  delete(gcf)
+end
 
 % distribution of MLE/CV bandwidth parameters
 figure;
@@ -102,6 +135,11 @@ title('distribution of phase delays from firing rate to animal speed')
 
 prettyFig()
 box(gca, 'off')
+
+if being_published
+	snapnow
+	delete(gcf)
+end
 
 
 %% Version Info
