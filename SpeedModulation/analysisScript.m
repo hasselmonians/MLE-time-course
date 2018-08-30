@@ -63,7 +63,7 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
   save(filepath, 'dataTable');
 end
 
-
+return;
 %% Distribution of Bandwidth Parameters
 % The best-estimate bandwidth parameters were computed using the Prerau & Eden algorithm for maximum-likelihood estimate with leave-one-out cross-validation. These values contrast with the standard in the literature of $k = 0.125$ s.
 
@@ -139,6 +139,37 @@ box(gca, 'off')
 if being_published
 	snapnow
 	delete(gcf)
+end
+
+%% Bandwidth Parameters Optimizing Cross-Correlation
+% The cross-correlation between the animal speed and and the kernel-smoothed firing rate was computed for a range of bandwidth parameters up to 60 seconds. If the firing rate directly corresponds to the animal's speed, then there should be strong correlation between the signals. Instead of smoothing the signal to reflect the likelihood, cross-validated for each spike, this analysis attempts to select a bandwidth parameter that maximizes the cross-correlation between the speed and firing rate signals.
+
+% The normalized difference between the MLE/CV-optimized bandwidth parameter and the XC-optimized bandwidth parameter is defined as the absolute ratio of the difference and the sum of the parameters.
+
+
+% distribution of XC bandwidth parameters
+figure;
+hist(dataTable.kcorr, 30)
+xlabel('bandwidth (s)')
+ylabel('count')
+title('distribution of XC bandwidth parameters')
+
+if being_published
+	snapnow
+	delete(gcf)
+end
+
+% normalized difference between the two optimization methods
+figure;
+bandwidth_difference = abs( (dataTable.kmax - dataTable.kcorr) / (dataTable.kmax + dataTable.kcorr) );
+hist(bandwidth_difference, 30);
+xlabel('normalized bandwidth difference')
+ylabel('count')
+title('distribution of difference between MLE/CV and XC bandwidth parameters')
+
+if being_published
+  snapnow
+  delete(gcf)
 end
 
 
