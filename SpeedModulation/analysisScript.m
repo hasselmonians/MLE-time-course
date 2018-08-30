@@ -15,6 +15,9 @@ tic
 
 % load the bandwidth data
 load('BandwidthEstimator-Caitlin.mat'); % dataTable
+speed       = cell(height(dataTable), 1); % time series of animal speed
+frequency   = cell(height(dataTable), 1); % time series of firing rate
+transfer    = cell(height(dataTable), 1); % time series of the transfer function between speed and frequency
 if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
   Pearson       = zeros(height(dataTable), 1);
   pValue        = zeros(height(dataTable), 1);
@@ -26,40 +29,44 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
     % load the Session object associated with these data
     load(dataTable.filenames{ii})
     root.cel = dataTable.cellnums(ii, :);
-    % set the start time to zero
-    root        = root.FixTime;
     % clear the velocity
-    root.b_vel  = [];
+    root.b_vel    = [];
     % Kalman filter the animal velocity
-    root        = root.AppendKalmanVel;
+    root          = root.AppendKalmanVel;
+    % set the start time to zero
+    root          = root.FixTime;
     % acquire the animal speed
-    speed       = root.svel;
+    speed{ii}     = root.svel;
 
     % set up the bandwidth estimator object
-    best        = BandwidthEstimator(root);
+    best          = BandwidthEstimator(root);
     % filter the data according to the optimal bandwidth parameter
-    bandwidth   = round(best.Fs * dataTable.kmax(ii)); % in time-steps
-    frequency   = best.getFiringRate(bandwidth);
+    bandwidth     = round(best.Fs * dataTable.kmax(ii)); % in time-steps
+    frequency{ii} = best.getFiringRate(bandwidth);
 
     % compute the mean firing rate
     meanFiringRate(ii) = length(best.spikeTimes)/length(best.timestamps);
 
     % find the Pearson correlation and time delay between the signals in seconds
     % this method uses the cross-correlation
-    [S1, S2, D] = alignsignals(speed, frequency, [], 'truncate');
-    [R, P]      = corrcoef(S1, S2, 'alpha', 0.05);
+    [S1, S2, D]   = alignsignals(speed{ii}, frequency{ii}, [], 'truncate');
+    [R, P]        = corrcoef(S1, S2, 'alpha', 0.05);
 
+    % compute the estimated transfer function between speed and frequency
+    % using Welch's method (power spectra)
+    transfer{ii}  = tfestimate(speed{ii}, frequency{ii}, [], [], [], best.Fs);
+    
     % update the output vectors
-    Pearson(ii) = R(2);
-    pValue(ii)  = P(1);
+    Pearson(ii)   = R(2);
+    pValue(ii)    = P(1);
     % if delay is positive, frequency lags behind speed
-    delay(ii)   = D / best.Fs; % seconds
+    delay(ii)     = D / best.Fs; % seconds
   end
-  data2         = table(meanFiringRate, Pearson, pValue, delay);
-  dataTable     = [dataTable data2];
+  data2           = table(meanFiringRate, Pearson, pValue, delay);
+  dataTable       = [dataTable data2];
 
   % save the data
-  filepath      = which('BandwidthEstimator-Caitlin.mat');
+  filepath        = which('BandwidthEstimator-Caitlin.mat');
   save(filepath, 'dataTable');
 end
 
