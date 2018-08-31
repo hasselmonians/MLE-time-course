@@ -193,7 +193,7 @@ legend(ax(3), leg, 'Location', 'best');
 xlabel(ax(3), 'lag (s)')
 ylabel(ax(3), 'cross-correlation')
 xlim(ax(3), [-5 5]);
-ylim(ax(3), 1e7*[1.5 2]);
+ylim(ax(3), 1e7*[1.5 2.5]);
 % distribution of kcorr parameters
 histogram(ax(4), dataTable.kcorr, 'Normalization', 'probability', 'BinMethod', 'fd')
 xlabel(ax(4), 'bandwidth (s)')
@@ -248,7 +248,7 @@ t = toc;
 
 %%
 % This file has the following external dependencies:
-showDependencyHash(mfilename);
+% showDependencyHash(mfilename);
 
 
 %%
