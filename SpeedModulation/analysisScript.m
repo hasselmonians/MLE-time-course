@@ -12,10 +12,11 @@ tic
 %% Analysis
 % A sample cell is loaded, using |CMBHOME| and the binned spike train with a time step of 0.02 s is acquired. A leave-one-out cross-validation strategy is performed on the likelihood analysis, yielding an estimate for the bandwidth parameter. The speed of the animal is computed by tracking two LEDs and smoothing the resulting recording with a Kalman filter.
 
+OVERRIDE = true;
 
 % load the bandwidth data
 load('BandwidthEstimator-Caitlin.mat'); % dataTable
-if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
+if ~any(strcmp('Pearson', dataTable.Properties.VariableNames)) || OVERRIDE == true
   Pearson       = zeros(height(dataTable), 1);
   pValue        = zeros(height(dataTable), 1);
   delay         = zeros(height(dataTable), 1);
@@ -23,6 +24,7 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
   speed         = cell(height(dataTable), 1); % time series of animal speed
   frequency     = cell(height(dataTable), 1); % time series of firing rate
   transfer      = cell(height(dataTable), 1); % time series of the transfer function between speed and frequency
+  transfreq     = cell(height(dataTable), 1); % frequencies corresponding to the transfer function
   for ii = 1:height(dataTable)
     textbar(ii, height(dataTable))
 
@@ -54,7 +56,7 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
 
     % compute the estimated transfer function between speed and frequency
     % using Welch's method (power spectra)
-    transfer{ii}  = tfestimate(speed{ii}, frequency{ii}, [], [], [], best.Fs);
+    [transfer{ii}, transfreq{ii}]  = tfestimate(speed{ii}, frequency{ii}, [], [], [], best.Fs);
     % update the output vectors
     Pearson(ii)   = R(2);
     pValue(ii)    = P(1);
@@ -66,7 +68,7 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
 
   % save the data
   filepath        = which('BandwidthEstimator-Caitlin.mat');
-  save(filepath, 'dataTable', 'speed', 'frequency', 'transfer');
+  save(filepath, 'dataTable', 'speed', 'frequency', 'transfer', 'transfreq');
 end
 
 
@@ -191,13 +193,14 @@ legend(ax(3), leg, 'Location', 'best');
 xlabel(ax(3), 'lag (s)')
 ylabel(ax(3), 'cross-correlation')
 xlim(ax(3), [-5 5]);
+ylim(ax(3), 1e7*[1.5 2]);
 % distribution of kcorr parameters
-histogram(ax(4), dataTable.kcorr, 'Normalization', 'pdf', 'BinMethod', 'fd')
+histogram(ax(4), dataTable.kcorr, 'Normalization', 'probability', 'BinMethod', 'fd')
 xlabel(ax(4), 'bandwidth (s)')
 ylabel(ax(4), 'count')
 
 prettyFig()
-labelFigure()
+% labelFigure()
 box(gca, 'off')
 
 if being_published
