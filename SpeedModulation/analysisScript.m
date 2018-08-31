@@ -12,7 +12,7 @@ tic
 %% Analysis
 % A sample cell is loaded, using |CMBHOME| and the binned spike train with a time step of 0.02 s is acquired. A leave-one-out cross-validation strategy is performed on the likelihood analysis, yielding an estimate for the bandwidth parameter. The speed of the animal is computed by tracking two LEDs and smoothing the resulting recording with a Kalman filter.
 
-OVERRIDE = true;
+OVERRIDE = false;
 
 % load the bandwidth data
 load('BandwidthEstimator-Caitlin.mat'); % dataTable
