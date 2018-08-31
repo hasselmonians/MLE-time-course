@@ -69,7 +69,7 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames))
   save(filepath, 'dataTable', 'speed', 'frequency', 'transfer');
 end
 
-return;
+
 %% Distribution of Bandwidth Parameters
 % The best-estimate bandwidth parameters were computed using the Prerau & Eden algorithm for maximum-likelihood estimate with leave-one-out cross-validation. These values contrast with the standard in the literature of $k = 0.125$ s.
 
@@ -83,7 +83,7 @@ std(dataTable.kmax(passing))
 
 % distribution of mean firing rates based on best-estimate bandwidths
 figure;
-plot(dataTable.kmax, 50*dataTable.meanFiringRate, 'o')
+plot(dataTable.kmax, 29.7*dataTable.meanFiringRate, 'o')
 xlabel('MLE/CV bandwidth parameter (s)')
 ylabel('mean firing rate (Hz)')
 title('mean firing rate by best bandwidth parameter')
@@ -98,8 +98,8 @@ end
 
 % mean firing rate by bandwidth bin
 figure;
-data2plot = 50*[mean(dataTable.meanFiringRate(passing)) mean(dataTable.meanFiringRate(~passing))];
-err2plot  = 50*[std(dataTable.meanFiringRate(passing)) std(dataTable.meanFiringRate(~passing))];
+data2plot = 29.7*[mean(dataTable.meanFiringRate(passing)) mean(dataTable.meanFiringRate(~passing))];
+err2plot  = 29.7*[std(dataTable.meanFiringRate(passing)) std(dataTable.meanFiringRate(~passing))];
 barwitherr(err2plot, data2plot);
 set(gca, 'XTickLabel', {'k \leq 40 s', 'k > 40 s'})
 ylabel('mean firing rate (Hz)')
@@ -115,7 +115,7 @@ end
 
 % distribution of MLE/CV bandwidth parameters
 figure;
-hist(dataTable.kmax, 30)
+histogram(dataTable.kmax, 'BinMethod', 'fd', 'Normalization', 'probability')
 xlabel('bandwidth (s)')
 ylabel('count')
 title('distribution of MLE/CV bandwidth parameters')
@@ -134,7 +134,7 @@ end
 
 
 figure;
-hist(dataTable.delay, 30)
+histogram(dataTable.delay, 'BinMethod', 'fd', 'Normalization', 'probability')
 xlabel('phase delay (s)')
 ylabel('count')
 title('distribution of phase delays from firing rate to animal speed')
@@ -152,15 +152,52 @@ end
 
 % The normalized difference between the MLE/CV-optimized bandwidth parameter and the XC-optimized bandwidth parameter is defined as the absolute ratio of the difference and the sum of the parameters.
 
+% The bandwidth parameters maximizing cross-correlation were found invariably to be with minimal filtering. This is similar to the maximum likelihood estimate without cross-validation bandwidth parameters, which converge towards zero. Note that when the algorithm detects that the best estimate bandwidth parameter is at the first index (i.e. $3/F_s$), it picks the maximal bandwidth instead.
 
-% distribution of XC bandwidth parameters
+
+% sample cross-correlations, log-max-cross-correlation, etc.
 figure;
-hist(dataTable.kcorr, 30)
-xlabel('bandwidth (s)')
-ylabel('count')
-title('distribution of XC bandwidth parameters')
+for ii = 1:4
+  ax(ii) = subplot(2, 2, ii); hold on;
+end
+% aligned speed and (kmax-bandwidth filtered) firing rate
+[S1, S2, D]   = alignsignals(speed{1}, frequency{1}, [], 'truncate');
+time          = (1/29.7) * (1:length(S1));
+yyaxis(ax(1), 'left')
+plot(ax(1), time, S1);
+xlabel(ax(1), 'time (s)');
+ylabel(ax(1), 'animal speed (cm/s)')
+yyaxis(ax(1), 'right')
+plot(ax(1), time, S2);
+ylabel(ax(1), 'firing rate (Hz)')
+% log-max correlation over bandwidth parameter
+load(dataTable.filenames{1});
+root.cel = dataTable.cellnums(1, :);
+best = BandwidthEstimator(root);
+[~, ~, logmaxcorr] = best.corrKernel(speed{1});
+plot(ax(2), best.range / best.Fs, logmaxcorr);
+xlabel(ax(2), 'bandwidth (s)');
+ylabel(ax(2), 'maximum log-cross-correlation')
+% correlation plot at maximal bandwidth
+k = round(best.Fs * dataTable.kmax(1) * [0.1 1.0 10]);
+k(mod(k, 2) == 0) = k(mod(k, 2) == 0) + 1;
+leg = cell(length(k), 1);
+for ii = 1:length(k)
+  [corr, lag] = xcorr(speed{1}, best.kconv(hanning(k(ii))));
+  plot(ax(3), lag/best.Fs, corr);
+  leg{ii} = ['k = ' num2str(oval(k(ii)/best.Fs, 2)) ' s'];
+end
+legend(ax(3), leg, 'Location', 'best');
+xlabel(ax(3), 'lag (s)')
+ylabel(ax(3), 'cross-correlation')
+xlim(ax(3), [-5 5]);
+% distribution of kcorr parameters
+histogram(ax(4), dataTable.kcorr, 'Normalization', 'pdf', 'BinMethod', 'fd')
+xlabel(ax(4), 'bandwidth (s)')
+ylabel(ax(4), 'count')
 
 prettyFig()
+labelFigure()
 box(gca, 'off')
 
 if being_published
@@ -170,8 +207,8 @@ end
 
 % normalized difference between the two optimization methods
 figure;
-bandwidth_difference = abs( (dataTable.kmax - dataTable.kcorr) / (dataTable.kmax + dataTable.kcorr) );
-hist(bandwidth_difference, 30);
+bandwidth_difference = abs( (dataTable.kmax - dataTable.kcorr) ./ (dataTable.kmax + dataTable.kcorr) );
+histogram(bandwidth_difference, 'BinMethod', 'fd', 'Normalization', 'probability');
 xlabel('normalized bandwidth difference')
 ylabel('count')
 title('distribution of difference between MLE/CV and XC bandwidth parameters')
