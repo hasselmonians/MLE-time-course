@@ -76,15 +76,15 @@ end
 % The best-estimate bandwidth parameters were computed using the Prerau & Eden algorithm for maximum-likelihood estimate with leave-one-out cross-validation. These values contrast with the standard in the literature of $k = 0.125$ s.
 
 passing = dataTable.kmax < 40;
-mean(dataTable.kmax(passing))
-std(dataTable.kmax(passing))
-100*sum(~passing)/length(dataTable.kmax)
+mean(dataTable.kmax(passing));
+std(dataTable.kmax(passing));
+100*sum(~passing)/length(dataTable.kmax);
 
 % 3.46 percent of recordings have MLE/CV bandwidth estimates above 40 s. These analyses have been discarded as outliers. Of the cells with best-estimate bandwidth parameters < 40 s, the mean bandwidth is 6.53 +/- 5.56 s. The smallest best-estimate bandwidth parameter is 0.63 s.
 
 
 % distribution of mean firing rates based on best-estimate bandwidths
-figure;
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 plot(dataTable.kmax, 29.7*dataTable.meanFiringRate, 'o')
 xlabel('MLE/CV bandwidth parameter (s)')
 ylabel('mean firing rate (Hz)')
@@ -99,7 +99,7 @@ if being_published
 end
 
 % mean firing rate by bandwidth bin
-figure;
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 data2plot = 29.7*[mean(dataTable.meanFiringRate(passing)) mean(dataTable.meanFiringRate(~passing))];
 err2plot  = 29.7*[std(dataTable.meanFiringRate(passing)) std(dataTable.meanFiringRate(~passing))];
 barwitherr(err2plot, data2plot);
@@ -116,7 +116,7 @@ if being_published
 end
 
 % distribution of MLE/CV bandwidth parameters
-figure;
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 histogram(dataTable.kmax, 'BinMethod', 'fd', 'Normalization', 'probability')
 xlabel('bandwidth (s)')
 ylabel('count')
@@ -135,7 +135,7 @@ end
 % Phase delays were computed by aligning the animal speed and firing rate signals using the peak cross-correlation and reported in seconds. A positive phase delay means that the firing rate lags behind the animal speed. Inversely, a negative phase delay means that the firing rate anticipates the animal speed.
 
 
-figure;
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 histogram(dataTable.delay, 'BinMethod', 'fd', 'Normalization', 'probability')
 xlabel('phase delay (s)')
 ylabel('count')
@@ -151,14 +151,12 @@ end
 
 %% Bandwidth Parameters Optimizing Cross-Correlation
 % The cross-correlation between the animal speed and and the kernel-smoothed firing rate was computed for a range of bandwidth parameters up to 60 seconds. If the firing rate directly corresponds to the animal's speed, then there should be strong correlation between the signals. Instead of smoothing the signal to reflect the likelihood, cross-validated for each spike, this analysis attempts to select a bandwidth parameter that maximizes the cross-correlation between the speed and firing rate signals.
-
 % The normalized difference between the MLE/CV-optimized bandwidth parameter and the XC-optimized bandwidth parameter is defined as the absolute ratio of the difference and the sum of the parameters.
-
 % The bandwidth parameters maximizing cross-correlation were found invariably to be with minimal filtering. This is similar to the maximum likelihood estimate without cross-validation bandwidth parameters, which converge towards zero. Note that when the algorithm detects that the best estimate bandwidth parameter is at the first index (i.e. $3/F_s$), it picks the maximal bandwidth instead.
 
 
 % sample cross-correlations, log-max-cross-correlation, etc.
-figure;
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 for ii = 1:4
   ax(ii) = subplot(2, 2, ii); hold on;
 end
@@ -209,7 +207,7 @@ if being_published
 end
 
 % normalized difference between the two optimization methods
-figure;
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 bandwidth_difference = abs( (dataTable.kmax - dataTable.kcorr) ./ (dataTable.kmax + dataTable.kcorr) );
 histogram(bandwidth_difference, 'BinMethod', 'fd', 'Normalization', 'probability');
 xlabel('normalized bandwidth difference')
