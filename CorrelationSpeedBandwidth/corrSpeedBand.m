@@ -7,7 +7,42 @@ pHeader;
 tic
 
 %% Introduction
+% Bandwidth parameters will be found for kernel smoothing, which maximimize the cross-correlation between animal speed and the MLE/CV firing rate estimate.
 
+if ~exist('corrSpeedBand.mat', 'file')
+  % load the analysis file
+  load('BandwidthEstimator-Caitlin.mat')
+  % instantiate output variables
+  kcorr     = zeros(height(dataTable), 1);
+  logmaxcorr= zeros(height(dataTable), 1);
+  delay     = zeros(height(dataTable), 1);
+  for ii = 1:height(dataTable)
+    textbar(ii, height(dataTable))
+    % load the specific data file
+    load(dataTable.filenames{ii})
+    root.cel  = dataTable.cellnums(ii, :);
+    speed     = root.svel;
+    % generate a BandwidthEstimator object
+    best      = BandwidthEstimator(root);
+    best.kernel = 'hanning';
+    % acquire the firing rate estimate
+    frequency = best.kconv(best.kernel(dataTable.kmax(ii)));
+    % futz with the object, since this isn't what it was intended to do
+    best.spikeTrain = speed;
+    % run the correlation analysis over the bandwidths
+    [est, kcorr(ii), lmc] = best.corrKernel(frequency, true);
+    logmaxcorr(ii) = max(lmc);
+    [~, ~, delay(ii)] = alignsignals(est, frequency, [], 'truncate');
+  end
+  % convert to seconds
+  delay = delay / best.Fs;
+  % save the data
+  dataTable = table(kcorr, logmaxcorr, delay);
+  save('~/code/MLE-time-course/CorrelationSpeedBandwidth/corrSpeedBand.mat', 'dataTable');
+  disp('data saved')
+else
+  load('corrSpeedBand.mat')
+end
 
 %% Version Info
 % The file that generated this document is called:
