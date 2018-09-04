@@ -32,7 +32,7 @@ $Revision: 1.1.6.7 $  $Date: 2008/02/29 12:45:30 $
 
 \begin{document}
 
-\title{Maximum-Likelihood Estimation of Bandwidth Parameter with Leave-One-Out Cross-Validation for Kernel Smoothing Spike Trains}
+\title{Comparison of Kernels for MLE/CV Analysis}
 \author{Alec Hoyland}
 \maketitle
 

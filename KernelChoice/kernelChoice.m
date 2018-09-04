@@ -26,7 +26,7 @@ best.kernel   = 'hanning';
 w1            = best.kernel(kmax);
 
 %% The Alpha Kernel
-% The alpha kernel is described by $k \exp (- k / \tau)$. Here, $\tau$ is set to the fourth root of the window bandwidth $k$.
+% The alpha kernel is described by $k \exp (- k / \tau)$. Here, $\tau$ is set 1 s.
 
 best.kernel   = 'alpha';
 [estimate2, kmax2, loglikelihoods2] = best.cvKernel;
