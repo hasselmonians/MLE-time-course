@@ -222,6 +222,40 @@ if being_published
   delete(gcf)
 end
 
+%% The Transfer Function
+% The transfer function $H(t)$ is defined as the impulse function, which when convolved with the speed signal $s(t)$ produces the firing rate $r(t)$. In the frequency domain $f$, this relationship is expressed as $H(f) = r(f)/s(f)$. The estimate is recovered with Welch's averaged periodogram.
+
+% acquire well-behaved cells
+% this method captures 75% of the cells, centered around the median MLE/CV bandwidth
+band    = [1 2*median(dataTable.kmax)-1];
+bandex  = find(dataTable.kmax >= band(1) & dataTable.kmax <= band(2));
+
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+clear ax
+for ii = 1:2
+  ax(ii) = subplot(2, 1, ii); hold on;
+end
+for ii = 1:length(bandex)
+  plot(ax(1), transfreq{bandex(ii)}, mag2db(abs(transfer{bandex(ii)})));
+end
+ylabel(ax(1), 'amplitude (dB)')
+title(ax(1), 'transfer functions')
+
+% filter the transfer functions
+figure; hold on;
+for ii = 1:length(bandex)
+  plot(ax(2), transfreq{bandex(ii)}, mag2db(abs(conv(transfer{bandex(ii)}, hanning(1001), 'same'))));
+end
+xlabel(ax(2), 'frequency (Hz)')
+ylabel(ax(2), 'amplitude (dB)')
+title(ax(2), 'hanning-filtered transfer function')
+
+prettyFig()
+
+if being_published
+  snapnow
+  delete(gcf)
+end
 
 %% Version Info
 % The file that generated this document is called:
