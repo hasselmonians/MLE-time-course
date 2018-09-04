@@ -13,15 +13,16 @@ if ~exist('corrSpeedBand.mat', 'file')
   % load the analysis file
   load('BandwidthEstimator-Caitlin.mat')
   % instantiate output variables
-  kcorr     = zeros(height(dataTable), 1);
-  logmaxcorr= zeros(height(dataTable), 1);
-  delay     = zeros(height(dataTable), 1);
+  kcorr       = zeros(height(dataTable), 1);
+  logmaxcorr  = zeros(height(dataTable), 1);
+  delay       = zeros(height(dataTable), 1);
   for ii = 1:height(dataTable)
     textbar(ii, height(dataTable))
     % load the specific data file
     load(dataTable.filenames{ii})
     root.cel  = dataTable.cellnums(ii, :);
-    speed     = root.svel;
+    root      = root.AppendKalmanVel;
+    speed     = root.vel;
     % generate a BandwidthEstimator object
     best      = BandwidthEstimator(root);
     best.kernel = 'hanning';
