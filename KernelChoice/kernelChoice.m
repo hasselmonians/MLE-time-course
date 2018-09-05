@@ -94,6 +94,7 @@ plot(time3, estimate3, 'LineWidth', 1);
 xlabel('time (s)')
 ylabel('firing rate (Hz)')
 xlim([0 10])
+ylim([0 80])
 legend({'hanning', 'alpha', 'alpha2'})
 
 prettyFig()
