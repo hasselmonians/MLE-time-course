@@ -26,22 +26,53 @@ best.kernel   = 'hanning';
 w1            = best.kernel(kmax);
 
 %% The Alpha Kernel
-% The alpha kernel is described by $k \exp (- k / \tau)$. Here, $\tau$ is set 1 s.
+% The alpha kernel is described by $k \exp (- k / \tau)$. Here, $\tau$ is set to $1 + \ln(n)$ time steps, where $n$ is the length of the filter in time steps.
 
 best.kernel   = 'alpha';
 [estimate2, kmax2, loglikelihoods2] = best.cvKernel;
 w2            = best.kernel(kmax2);
+w3            = best.kernel(kmax);
+
+%% Non-Causal Events are Caused by Two-Tailed Kernels
+% Filtering with non-causal kernels determines the value of a firing rate estimate at time $t$ by relying on information from time $\tau > t$. This occurs when the kernel is two-tailed. In this situation, the value of the firing rate estimate is composed of a weighted sum of values before and after that point in time.
+% In the following plot, the hanning filter estimates the firing rate as positive before a single spike is shown.
+
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on;
+x             = zeros(100,1);
+x([40 50 70]) = 1;
+rate1         = conv(x, BandwidthEstimator.hanning(30), 'same');
+rate2         = conv(x, BandwidthEstimator.alpha(30), 'same');
+for ii = 1:length(x)
+  if x(ii) == 1
+    plot([ii ii], [0 1], 'k');
+  end
+end
+plot(rate1);
+plot(16:115, rate2);
+xlabel('time steps')
+ylabel('firing rate (Hz)')
+legend({'data', 'hanning', 'alpha'})
+
+prettyFig()
+box off
+
+if being_published
+  snapnow
+  delete(gcf)
+end
 
 %% Comparison
-% The |cvKernel| algorithm accounts for edge and shifting effects.
+% The |kconv| algorithm accounts for edge and shifting effects. The lag is zero. For the following plots, the bandwidth parameter was determined by the MLE/CV method. The alpha kernel and smoothed firing rate is plotted twice: (1) using the alpha kernel MLE/CV bandwidth parameter estimate, and (2) using the hanning kernel MLE/CV bandwidth parameter estimate.
 
 % superimposed kernels in the time domain
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on;
 plot((1:length(w1)) - median(1:length(w1)), w1 / sum(w1));
 plot(w2 / sum(w2));
+plot(w3 / sum(w3));
 xlabel('time steps')
 ylabel('kernel density (a.u.)')
-legend({'hanning', 'alpha'})
+xlim([-50 50])
+legend({'hanning', 'alpha', 'alpha2'})
 
 prettyFig()
 box off
@@ -55,12 +86,15 @@ end
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on;
 time          = (1 / best.Fs) * (1:length(estimate));
 time2         = (1 / best.Fs) * (1:length(estimate2));
+estimate3     = best.kconv(best.alpha(kmax));
+time3         = (1 / best.Fs) * (1:length(estimate3));
 plot(time, estimate, 'LineWidth', 1);
 plot(time2, estimate2, 'LineWidth', 1);
+plot(time3, estimate3, 'LineWidth', 1);
 xlabel('time (s)')
 ylabel('firing rate (Hz)')
-xlim([0, 10 * best.Fs])
-legend({'hanning', 'alpha'})
+xlim([0 10])
+legend({'hanning', 'alpha', 'alpha2'})
 
 prettyFig()
 box off
@@ -71,7 +105,7 @@ if being_published
 end
 
 % align the signals to determine lag
-[~, ~, D]   = alignsignals(estimate, estimate, [], 'truncate');
+[~, ~, D]   = alignsignals(best.spikeTrain, estimate, [], 'truncate');
 [~, ~, D2]  = alignsignals(estimate, estimate2, [], 'truncate');
 
 %% Version Info
