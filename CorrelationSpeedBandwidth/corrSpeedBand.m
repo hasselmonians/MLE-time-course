@@ -27,7 +27,7 @@ if ~exist('corrSpeedBand.mat', 'file')
     best      = BandwidthEstimator(root);
     best.kernel = 'hanning';
     % acquire the firing rate estimate
-    frequency = best.kconv(best.kernel(dataTable.kmax(ii)));
+    frequency = best.kconv(best.kernel(round(dataTable.kmax(ii)*best.Fs)));
     % futz with the object, since this isn't what it was intended to do
     best.spikeTrain = speed;
     % run the correlation analysis over the bandwidths
