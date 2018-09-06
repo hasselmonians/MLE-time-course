@@ -24,6 +24,7 @@ for index = 1:length(cluster_info_index)
 
   % run locally to test things
   if runLocal == true
+    cd(r.location)
     % run only as a test (i.e. do not add to the path)
     for ii = 1:length(arg)
       arg = strrep(arg, 'false', 'true');
