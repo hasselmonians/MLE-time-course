@@ -19,6 +19,7 @@ try
 catch
   % if the bandwidth data can't be loaded, it will be computed instead
   disp('[INFO] bandwidth data couldn''t be loaded, computing instead')
+  load('/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin.mat')
   Pearson       = zeros(height(dataTable), 1);
   pValue        = zeros(height(dataTable), 1);
   delay         = zeros(height(dataTable), 1);
@@ -88,17 +89,22 @@ end % try/catch
 %% Distribution of Bandwidth Parameters
 % The best-estimate bandwidth parameters were computed using the Prerau & Eden algorithm for maximum-likelihood estimate with leave-one-out cross-validation. These values contrast with the standard in the literature of $k = 0.125$ s.
 
-passing = dataTable.kmax < 40;
+upperBound = mean(dataTable.kmax) + 2 * std(dataTable.kmax);
+passing = dataTable.kmax < upperBound;
 mean(dataTable.kmax(passing));
 std(dataTable.kmax(passing));
 100*sum(~passing)/length(dataTable.kmax);
 
 % 3.46 percent of recordings have MLE/CV bandwidth estimates above 40 s. These analyses have been discarded as outliers. Of the cells with best-estimate bandwidth parameters < 40 s, the mean bandwidth is 6.53 +/- 5.56 s. The smallest best-estimate bandwidth parameter is 0.63 s.
 
+% generate a BandwidthEstimator object
+load(dataTable.filenames{1});
+root.cel = dataTable.cellnums(1, :);
+best = BandwidthEstimator(root);
 
 % distribution of mean firing rates based on best-estimate bandwidths
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-plot(dataTable.kmax, 29.7*dataTable.meanFiringRate, 'o')
+plot(dataTable.kmax, best.Fs * dataTable.meanFiringRate, 'o')
 xlabel('MLE/CV bandwidth parameter (s)')
 ylabel('mean firing rate (Hz)')
 title('mean firing rate by best bandwidth parameter')
@@ -116,7 +122,7 @@ figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 80
 data2plot = 29.7*[mean(dataTable.meanFiringRate(passing)) mean(dataTable.meanFiringRate(~passing))];
 err2plot  = 29.7*[std(dataTable.meanFiringRate(passing)) std(dataTable.meanFiringRate(~passing))];
 barwitherr(err2plot, data2plot);
-set(gca, 'XTickLabel', {'k \leq 40 s', 'k > 40 s'})
+set(gca, 'XTickLabel', {'k \leq ' num2str(upperBound / best.Fs) ' s', 'k > ' num2str(upperBound / best.Fs) ' s'})
 ylabel('mean firing rate (Hz)')
 title('mean firing rate by bandwidth category')
 
@@ -133,6 +139,7 @@ figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 80
 histogram(dataTable.kmax, 'BinMethod', 'fd', 'Normalization', 'probability')
 xlabel('bandwidth (s)')
 ylabel('count')
+xlim([0, upperBound / best.Fs])
 title('distribution of MLE/CV bandwidth parameters')
 
 prettyFig()
@@ -152,6 +159,7 @@ figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 80
 histogram(dataTable.delay, 'BinMethod', 'fd', 'Normalization', 'probability')
 xlabel('phase delay (s)')
 ylabel('count')
+xlim(mean(dataTable.delay) + 2 * [-std(dataTable.delay), std(dataTable.delay)])
 title('distribution of phase delays from firing rate to animal speed')
 
 prettyFig()
@@ -162,86 +170,11 @@ if being_published
 	delete(gcf)
 end
 
-%% Bandwidth Parameters Optimizing Cross-Correlation
-% The cross-correlation between the animal speed and and the kernel-smoothed firing rate was computed for a range of bandwidth parameters up to 60 seconds. If the firing rate directly corresponds to the animal's speed, then there should be strong correlation between the signals. Instead of smoothing the signal to reflect the likelihood, cross-validated for each spike, this analysis attempts to select a bandwidth parameter that maximizes the cross-correlation between the speed and firing rate signals.
-% The normalized difference between the MLE/CV-optimized bandwidth parameter and the XC-optimized bandwidth parameter is defined as the absolute ratio of the difference and the sum of the parameters.
-% The bandwidth parameters maximizing cross-correlation were found invariably to be with minimal filtering. This is similar to the maximum likelihood estimate without cross-validation bandwidth parameters, which converge towards zero. Note that when the algorithm detects that the best estimate bandwidth parameter is at the first index (i.e. $3/F_s$), it picks the maximal bandwidth instead.
-
-
-% sample cross-correlations, log-max-cross-correlation, etc.
-figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-for ii = 1:4
-  ax(ii) = subplot(2, 2, ii); hold on;
-end
-% aligned speed and (kmax-bandwidth filtered) firing rate
-[S1, S2, D]   = alignsignals(speed{1}, frequency{1}, [], 'truncate');
-time          = (1/29.7) * (1:length(S1));
-yyaxis(ax(1), 'left')
-plot(ax(1), time, S1);
-xlabel(ax(1), 'time (s)');
-ylabel(ax(1), 'animal speed (cm/s)')
-yyaxis(ax(1), 'right')
-plot(ax(1), time, S2);
-ylabel(ax(1), 'firing rate (Hz)')
-% log-max correlation over bandwidth parameter
-load(dataTable.filenames{1});
-root.cel = dataTable.cellnums(1, :);
-best = BandwidthEstimator(root);
-[~, ~, logmaxcorr] = best.corrKernel(speed{1});
-plot(ax(2), best.range / best.Fs, logmaxcorr);
-xlabel(ax(2), 'bandwidth (s)');
-ylabel(ax(2), 'maximum log-cross-correlation')
-% correlation plot at maximal bandwidth
-k = round(best.Fs * dataTable.kmax(1) * [0.1 1.0 10]);
-k(mod(k, 2) == 0) = k(mod(k, 2) == 0) + 1;
-leg = cell(length(k), 1);
-for ii = 1:length(k)
-  [corr, lag] = xcorr(speed{1}, best.kconv(hanning(k(ii))));
-  plot(ax(3), lag/best.Fs, corr);
-  leg{ii} = ['k = ' num2str(oval(k(ii)/best.Fs, 2)) ' s'];
-end
-legend(ax(3), leg, 'Location', 'best');
-xlabel(ax(3), 'lag (s)')
-ylabel(ax(3), 'cross-correlation')
-xlim(ax(3), [-5 5]);
-ylim(ax(3), 1e7*[1.5 2.5]);
-% distribution of kcorr parameters
-histogram(ax(4), dataTable.kcorr, 'Normalization', 'probability', 'BinMethod', 'fd')
-xlabel(ax(4), 'bandwidth (s)')
-ylabel(ax(4), 'count')
-
-prettyFig()
-% labelFigure()
-box(gca, 'off')
-
-if being_published
-	snapnow
-	delete(gcf)
-end
-
-% normalized difference between the two optimization methods
-figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-bandwidth_difference = abs( (dataTable.kmax - dataTable.kcorr) ./ (dataTable.kmax + dataTable.kcorr) );
-histogram(bandwidth_difference, 'BinMethod', 'fd', 'Normalization', 'probability');
-xlabel('normalized bandwidth difference')
-ylabel('count')
-title('distribution of difference between MLE/CV and XC bandwidth parameters')
-
-prettyFig()
-box(gca, 'off')
-
-if being_published
-  snapnow
-  delete(gcf)
-end
-
 %% The Transfer Function
 % The transfer function $H(t)$ is defined as the impulse function, which when convolved with the speed signal $s(t)$ produces the firing rate $r(t)$. In the frequency domain $f$, this relationship is expressed as $H(f) = r(f)/s(f)$. The estimate is recovered with Welch's averaged periodogram.
 
-% acquire well-behaved cells
-% this method captures 75% of the cells, centered around the median MLE/CV bandwidth
-band    = [1 2*median(dataTable.kmax)-1];
-bandex  = find(dataTable.kmax >= band(1) & dataTable.kmax <= band(2));
+disp('ping!')
+return
 
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 clear ax
