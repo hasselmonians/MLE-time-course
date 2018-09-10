@@ -15,8 +15,12 @@ tic
 OVERRIDE = false;
 
 % load the bandwidth data
-load('BandwidthEstimator-Caitlin.mat'); % dataTable
-if ~any(strcmp('Pearson', dataTable.Properties.VariableNames)) || OVERRIDE == true
+try
+  load('/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin-2.mat')
+  disp('[INFO] load the bandwidth data')
+catch
+  % if the bandwidth data can't be loaded, it will be computed instead
+  disp('[INFO] bandwidth data couldn''t be loaded, computing instead')
   Pearson       = zeros(height(dataTable), 1);
   pValue        = zeros(height(dataTable), 1);
   delay         = zeros(height(dataTable), 1);
@@ -44,6 +48,11 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames)) || OVERRIDE == tr
     best          = BandwidthEstimator(root);
     % filter the data according to the optimal bandwidth parameter
     bandwidth     = round(best.Fs * dataTable.kmax(ii)); % in time-steps
+    % force bandwidth to be odd
+    if mod(bandwidth, 2) == 0
+      bandwidth = bandwidth + 1;
+    end
+    % compute the firing rate estimate using the best bandwidth parameter
     frequency{ii} = best.getFiringRate(bandwidth);
 
     % compute the mean firing rate
@@ -55,22 +64,28 @@ if ~any(strcmp('Pearson', dataTable.Properties.VariableNames)) || OVERRIDE == tr
     [R, P]        = corrcoef(S1, S2, 'alpha', 0.05);
 
     % compute the estimated transfer function between speed and frequency
-    % using Welch's method (power spectra)
-    [transfer{ii}, transfreq{ii}]  = tfestimate(speed{ii}, frequency{ii}, [], [], [], best.Fs);
+    % use Srinivas' function
+    options.filter_length         = dataTable.kmax(ii);
+    options.reg                   = 1;
+    options.normalise             = true;
+    options.offset                = 0;
+    options.debug_mode            = true;
+    options.method                = 'least-squares';
+    [transfer{ii}, transfreq{ii}] = fitFilter2Data(speed{ii}, frequency{ii}, options);
     % update the output vectors
     Pearson(ii)   = R(2);
     pValue(ii)    = P(1);
     % if delay is positive, frequency lags behind speed
     delay(ii)     = D / best.Fs; % seconds
-  end
+  end % for
   data2           = table(meanFiringRate, Pearson, pValue, delay);
   dataTable       = [dataTable data2];
 
   % save the data
-  filepath        = which('BandwidthEstimator-Caitlin.mat');
-  save(filepath, 'dataTable', 'speed', 'frequency', 'transfer', 'transfreq');
-end
-
+  filename        = '/home/ahoyland/code/MLE-time-course/BandwidthEstimator-2.mat';
+  save(filename, 'dataTable', 'speed', 'frequency', 'transfer', 'transfreq');
+  disp(['[INFO] bandwidth data saved in ''' filename ''''])
+end % try/catch
 
 %% Distribution of Bandwidth Parameters
 % The best-estimate bandwidth parameters were computed using the Prerau & Eden algorithm for maximum-likelihood estimate with leave-one-out cross-validation. These values contrast with the standard in the literature of $k = 0.125$ s.
