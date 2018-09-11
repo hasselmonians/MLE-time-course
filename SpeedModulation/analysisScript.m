@@ -68,10 +68,10 @@ catch
     % this cannot be done with alignsignals because the function can shift the spike train
     if D > 0
       % prepend the firing rate estimate with zeros
-      signal      = [signal(D:end)'; zeros(D, 1)];
+      signal      = [signal(D:end)'; zeros(D-1, 1)];
     elseif D < 0
       % append the firing rate estimate with zeros
-      signal      = [zeros(abs(D), 1); signal(1:end-abs(D))'];
+      signal      = [zeros(abs(D), 1); signal(1:end-abs(D)-1)'];
     else
       % do nothing
     end
