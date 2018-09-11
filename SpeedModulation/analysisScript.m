@@ -68,14 +68,14 @@ catch
     % this cannot be done with alignsignals because the function can shift the spike train
     if D > 0
       % prepend the firing rate estimate with zeros
-      signal      = [signal(D:end)'; zeros(D-1, 1)];
+      signal2     = [signal(D:end)'; zeros(D, 1)];
     elseif D < 0
       % append the firing rate estimate with zeros
-      signal      = [zeros(abs(D), 1); signal(1:end-abs(D)-1)'];
+      signal2     = [zeros(abs(D), 1); signal(1:end-abs(D))'];
     else
       % do nothing
     end
-    frequency{ii} = signal;
+    frequency{ii} = signal2;
     % (4) compute the delay between the animal speed and the firing rate
     [S1, S2, D]   = alignsignals(speed{ii}, frequency{ii}, 30, 'truncate');
     [R, P]        = corrcoef(S1, S2, 'alpha', 0.05);
@@ -163,6 +163,43 @@ if being_published
 	snapnow
 	delete(gcf)
 end
+
+%% Why is Preprocessing the Firing Rate Estimate for Phase Delay Important?
+% Preprocessing the firing rate phase delay is necessary to confirm the phase relationship between the animal speed and the firing rate. Asymmetric kernels (such as the alpha function) introduce phase delays proportional to the bandwidth parameter. While the Prerau & Eden method of maximum-likelihood estimate with cross-validation is invariant to phase delay introduced by the kernel, delay must be eliminated before comparison to the animal speed (to avoid introduction spurious delays).
+
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+clear ax
+for ii = 1:3
+  ax(ii) = subplot(3, 1, ii); hold on
+end
+% phase delay vs. bandwidth parameter
+band = 3:2:(60*best.Fs);
+for ii = 1:length(band)
+  D(ii) = finddelay(best.spikeTrain, best.kconv(band(ii)), 30);
+end
+plot(ax(1), band / best.Fs, D / best.Fs);
+xlabel(ax(1), 'bandwidth parameter (s)')
+ylabel(ax(1), 'lag time (s)')
+% spike train and firing rate (with delay)
+yyaxis(ax(2), 'left')
+plot(ax(2), best.timestamps, best.spikeTrain)
+xlabel(ax(2), 'time (s)')
+xlim(ax(2), [0 1])
+ylabel(ax(2), 'spike count')
+yyaxis(ax(2), 'right')
+plot(ax(2), best.timestamps, best.kconv(dataTable.kmax(1)))
+ylabel(ax(2), 'firing rate (Hz)')
+% spike train and firing rate (without delay)
+[S1, S2] = alignsignals(best.spikeTrain, best.kconv(dataTable.kmax(1)), [], 'truncate')
+time = (1:length(S1)) / best.Fs;
+plot(ax(3), time, S1)
+xlabel(ax(3), 'time (s)')
+xlim(ax(3), [0 1])
+ylabel(ax(3), 'spike count')
+yyaxis(ax(3), 'right')
+plot(ax(3), time, S2)
+ylabel(ax(3), 'firing rate (Hz)')
+
 
 
 %% Distribution of Delays Between Animal Speed and Firing Rate
