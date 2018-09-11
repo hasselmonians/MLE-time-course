@@ -81,7 +81,7 @@ catch
   dataTable       = [dataTable data2];
 
   % save the data
-  filename        = '/home/ahoyland/code/MLE-time-course/BandwidthEstimator-2.mat';
+  filename        = '/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin-2.mat';
   save(filename, 'dataTable', 'speed', 'frequency', 'transfer', 'transfreq');
   disp(['[INFO] bandwidth data saved in ''' filename ''''])
 end % try/catch
@@ -89,22 +89,22 @@ end % try/catch
 %% Distribution of Bandwidth Parameters
 % The best-estimate bandwidth parameters were computed using the Prerau & Eden algorithm for maximum-likelihood estimate with leave-one-out cross-validation. These values contrast with the standard in the literature of $k = 0.125$ s.
 
-upperBound = mean(dataTable.kmax) + 2 * std(dataTable.kmax);
-passing = dataTable.kmax < upperBound;
-mean(dataTable.kmax(passing));
-std(dataTable.kmax(passing));
-100*sum(~passing)/length(dataTable.kmax);
-
-% 3.46 percent of recordings have MLE/CV bandwidth estimates above 40 s. These analyses have been discarded as outliers. Of the cells with best-estimate bandwidth parameters < 40 s, the mean bandwidth is 6.53 +/- 5.56 s. The smallest best-estimate bandwidth parameter is 0.63 s.
-
 % generate a BandwidthEstimator object
 load(dataTable.filenames{1});
 root.cel = dataTable.cellnums(1, :);
 best = BandwidthEstimator(root);
 
+% compute metrics
+passing = dataTable.kmax / best.Fs < 10;
+mean(dataTable.kmax(passing));
+std(dataTable.kmax(passing));
+100*sum(~passing)/length(dataTable.kmax);
+
+% 3.46 percent of recordings have MLE/CV bandwidth estimates above 40 s. These analyses have been discarded as outliers. Of the cells with best-estimate bandwidth parameters < 10 s, the mean bandwidth is 6.53 +/- 5.56 s. The smallest best-estimate bandwidth parameter is 0.63 s.
+
 % distribution of mean firing rates based on best-estimate bandwidths
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-plot(dataTable.kmax, best.Fs * dataTable.meanFiringRate, 'o')
+plot(dataTable.kmax/best.Fs, best.Fs * dataTable.meanFiringRate, 'o')
 xlabel('MLE/CV bandwidth parameter (s)')
 ylabel('mean firing rate (Hz)')
 title('mean firing rate by best bandwidth parameter')
@@ -119,10 +119,10 @@ end
 
 % mean firing rate by bandwidth bin
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-data2plot = 29.7*[mean(dataTable.meanFiringRate(passing)) mean(dataTable.meanFiringRate(~passing))];
-err2plot  = 29.7*[std(dataTable.meanFiringRate(passing)) std(dataTable.meanFiringRate(~passing))];
+data2plot = best.Fs*[mean(dataTable.meanFiringRate(passing)) mean(dataTable.meanFiringRate(~passing))];
+err2plot  = best.Fs*[std(dataTable.meanFiringRate(passing)) std(dataTable.meanFiringRate(~passing))];
 barwitherr(err2plot, data2plot);
-set(gca, 'XTickLabel', {'k \leq ' num2str(upperBound / best.Fs) ' s', 'k > ' num2str(upperBound / best.Fs) ' s'})
+set(gca, 'XTickLabel', {'k \leq 10 s', 'k > 10 s'})
 ylabel('mean firing rate (Hz)')
 title('mean firing rate by bandwidth category')
 
@@ -136,10 +136,8 @@ end
 
 % distribution of MLE/CV bandwidth parameters
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-histogram(dataTable.kmax, 'BinMethod', 'fd', 'Normalization', 'probability')
+histogram(dataTable.kmax/best.Fs, 'BinMethod', 'fd', 'Normalization', 'probability')
 xlabel('bandwidth (s)')
-ylabel('count')
-xlim([0, upperBound / best.Fs])
 title('distribution of MLE/CV bandwidth parameters')
 
 prettyFig()
@@ -156,10 +154,10 @@ end
 
 
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-histogram(dataTable.delay, 'BinMethod', 'fd', 'Normalization', 'probability')
+histogram(dataTable.delay(passing), 'BinMethod', 'fd', 'Normalization', 'probability')
 xlabel('phase delay (s)')
 ylabel('count')
-xlim(mean(dataTable.delay) + 2 * [-std(dataTable.delay), std(dataTable.delay)])
+xlim(mean(dataTable.delay(passing)) + 2 * [-std(dataTable.delay(passing)), std(dataTable.delay(passing))])
 title('distribution of phase delays from firing rate to animal speed')
 
 prettyFig()
