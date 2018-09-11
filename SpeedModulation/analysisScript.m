@@ -190,25 +190,13 @@ end
 disp('ping!')
 return
 
-figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-clear ax
-for ii = 1:2
-  ax(ii) = subplot(2, 1, ii); hold on;
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
+for ii = 1:length(transfer)
+  plot(best.Fs ./ transfreq{ii}, mag2db(abs(fft(transfer{ii}))), 'LineWidth', 1)
 end
-for ii = 1:length(bandex)
-  plot(ax(1), transfreq{bandex(ii)}, mag2db(abs(transfer{bandex(ii)})));
-end
-ylabel(ax(1), 'amplitude (dB)')
-title(ax(1), 'transfer functions')
-
-% filter the transfer functions
-figure; hold on;
-for ii = 1:length(bandex)
-  plot(ax(2), transfreq{bandex(ii)}, mag2db(abs(conv(transfer{bandex(ii)}, hanning(1001), 'same'))));
-end
-xlabel(ax(2), 'frequency (Hz)')
-ylabel(ax(2), 'amplitude (dB)')
-title(ax(2), 'hanning-filtered transfer function')
+ylabel('amplitude (dB)')
+xlabel('frequency (Hz)')
+title('transfer functions')
 
 prettyFig()
 box(gca, 'off')
