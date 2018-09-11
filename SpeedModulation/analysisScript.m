@@ -61,17 +61,17 @@ catch
     % this method uses the cross-correlation
 
     % (1) compute the firing rate estimate using the best bandwidth parameter
-    signal = best.kconv(bandwidth);
+    signal        = best.kconv(bandwidth);
     % (2) compute the delay between the spike train (real data) and the firing rate estimate
-    delay         = finddelay(best.spikeTrain, signal);
+    D             = findD(best.spikeTrain, signal);
     % (3) pre-process the firing rate estimate to align with the spike train
     % this cannot be done with alignsignals because the function can shift the spike train
-    if delay > 0
+    if D > 0
       % prepend the firing rate estimate with zeros
-      signal      = [signal(delay:end)'; zeros(delay, 1)];
-    elseif delay < 0
+      signal      = [signal(D:end)'; zeros(D, 1)];
+    elseif D < 0
       % append the firing rate estimate with zeros
-      signal      = [zeros(abs(delay), 1); signal(1:end-abs(delay))'];
+      signal      = [zeros(abs(D), 1); signal(1:end-abs(D))'];
     else
       % do nothing
     end
