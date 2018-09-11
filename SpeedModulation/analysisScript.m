@@ -73,7 +73,7 @@ catch
       % append the firing rate estimate with zeros
       signal2     = [zeros(abs(D), 1); signal(1:end-abs(D))'];
     else
-      % do nothing
+      signal2 = signal;
     end
     frequency{ii} = signal2;
     % (4) compute the delay between the animal speed and the firing rate
