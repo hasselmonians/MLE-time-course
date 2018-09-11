@@ -63,7 +63,7 @@ catch
     % (1) compute the firing rate estimate using the best bandwidth parameter
     signal        = best.kconv(bandwidth);
     % (2) compute the delay between the spike train (real data) and the firing rate estimate
-    D             = finddelay(best.spikeTrain, signal);
+    D             = finddelay(best.spikeTrain, signal, 30);
     % (3) pre-process the firing rate estimate to align with the spike train
     % this cannot be done with alignsignals because the function can shift the spike train
     if D > 0
