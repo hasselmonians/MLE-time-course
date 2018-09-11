@@ -45,21 +45,39 @@ catch
 
     % set up the bandwidth estimator object
     best          = BandwidthEstimator(root);
-    % filter the data according to the optimal bandwidth parameter
-    bandwidth     = round(best.Fs * dataTable.kmax(ii)); % in time-steps
+    best.kernel   = 'alpha'; % this should already be true, but to be safe...
+
     % force bandwidth to be odd
-    if mod(bandwidth, 2) == 0
-      bandwidth = bandwidth + 1;
+    if mod(dataTable.kmax(ii), 2) == 0
+      bandwidth   = dataTable.kmax(ii) + 1;
+    else
+      bandwidth   = dataTable.kmax(ii);
     end
-    % compute the firing rate estimate using the best bandwidth parameter
-    frequency{ii} = best.getFiringRate(bandwidth);
 
     % compute the mean firing rate
-    meanFiringRate(ii) = length(best.spikeTimes)/length(best.timestamps);
+    meanFiringRate(ii) = length(best.spikeTimes)/length(best.timestamps)*best.Fs; % Hz
 
     % find the Pearson correlation and time delay between the signals in seconds
     % this method uses the cross-correlation
-    [S1, S2, D]   = alignsignals(speed{ii}, frequency{ii}, [], 'truncate');
+
+    % (1) compute the firing rate estimate using the best bandwidth parameter
+    signal = best.kconv(bandwidth);
+    % (2) compute the delay between the spike train (real data) and the firing rate estimate
+    delay         = finddelay(best.spikeTrain, signal);
+    % (3) pre-process the firing rate estimate to align with the spike train
+    % this cannot be done with alignsignals because the function can shift the spike train
+    if delay > 0
+      % prepend the firing rate estimate with zeros
+      signal      = [signal(delay:end)'; zeros(delay, 1)];
+    elseif delay < 0
+      % append the firing rate estimate with zeros
+      signal      = [zeros(abs(delay), 1); signal(1:end-abs(delay))'];
+    else
+      % do nothing
+    end
+    frequency{ii} = signal;
+    % (4) compute the delay between the animal speed and the firing rate
+    [S1, S2, D]   = alignsignals(speed{ii}, frequency{ii}, 30, 'truncate');
     [R, P]        = corrcoef(S1, S2, 'alpha', 0.05);
 
     % compute the estimated transfer function between speed and frequency
@@ -96,11 +114,9 @@ best = BandwidthEstimator(root);
 
 % compute metrics
 passing = dataTable.kmax / best.Fs < 10;
-mean(dataTable.kmax(passing));
-std(dataTable.kmax(passing));
-100*sum(~passing)/length(dataTable.kmax);
-
-% 3.46 percent of recordings have MLE/CV bandwidth estimates above 40 s. These analyses have been discarded as outliers. Of the cells with best-estimate bandwidth parameters < 10 s, the mean bandwidth is 6.53 +/- 5.56 s. The smallest best-estimate bandwidth parameter is 0.63 s.
+mean(dataTable.kmax(passing))
+std(dataTable.kmax(passing))
+100*sum(~passing)/length(dataTable.kmax)
 
 % distribution of mean firing rates based on best-estimate bandwidths
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
@@ -119,8 +135,8 @@ end
 
 % mean firing rate by bandwidth bin
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-data2plot = best.Fs*[mean(dataTable.meanFiringRate(passing)) mean(dataTable.meanFiringRate(~passing))];
-err2plot  = best.Fs*[std(dataTable.meanFiringRate(passing)) std(dataTable.meanFiringRate(~passing))];
+data2plot = [mean(dataTable.meanFiringRate(passing)) mean(dataTable.meanFiringRate(~passing))];
+err2plot  = [std(dataTable.meanFiringRate(passing)) std(dataTable.meanFiringRate(~passing))];
 barwitherr(err2plot, data2plot);
 set(gca, 'XTickLabel', {'k \leq 10 s', 'k > 10 s'})
 ylabel('mean firing rate (Hz)')
@@ -195,6 +211,7 @@ ylabel(ax(2), 'amplitude (dB)')
 title(ax(2), 'hanning-filtered transfer function')
 
 prettyFig()
+box(gca, 'off')
 
 if being_published
   snapnow
