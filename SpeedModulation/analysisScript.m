@@ -190,7 +190,7 @@ yyaxis(ax(2), 'right')
 plot(ax(2), best.timestamps, best.kconv(dataTable.kmax(1)))
 ylabel(ax(2), 'firing rate (Hz)')
 % spike train and firing rate (without delay)
-[S1, S2] = alignsignals(best.spikeTrain, best.kconv(dataTable.kmax(1)), [], 'truncate')
+[S1, S2] = alignsignals(best.spikeTrain, best.kconv(dataTable.kmax(1)), [], 'truncate');
 time = (1:length(S1)) / best.Fs;
 plot(ax(3), time, S1)
 xlabel(ax(3), 'time (s)')
