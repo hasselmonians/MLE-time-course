@@ -173,18 +173,20 @@ for ii = 1:3
   ax(ii) = subplot(3, 1, ii); hold on
 end
 % phase delay vs. bandwidth parameter
-band = 3:2:(60*best.Fs);
+band = 3:10:(30*best.Fs);
+best.kernel = 'alpha';
 for ii = 1:length(band)
-  D(ii) = finddelay(best.spikeTrain, best.kconv(band(ii)), 30);
+  D(ii) = finddelay(best.spikeTrain, best.kconv(band(ii)));
 end
-plot(ax(1), band / best.Fs, D / best.Fs);
+plot(ax(1), band / best.Fs, D / best.Fs, 'ko');
 xlabel(ax(1), 'bandwidth parameter (s)')
 ylabel(ax(1), 'lag time (s)')
 % spike train and firing rate (with delay)
 yyaxis(ax(2), 'left')
-plot(ax(2), best.timestamps, best.spikeTrain)
+h = stem(ax(2), best.timestamps, best.spikeTrain);
+set(h, 'Marker', 'none');
 xlabel(ax(2), 'time (s)')
-xlim(ax(2), [0 1])
+xlim(ax(2), [300 303])
 ylabel(ax(2), 'spike count')
 yyaxis(ax(2), 'right')
 plot(ax(2), best.timestamps, best.kconv(dataTable.kmax(1)))
@@ -192,9 +194,10 @@ ylabel(ax(2), 'firing rate (Hz)')
 % spike train and firing rate (without delay)
 [S1, S2] = alignsignals(best.spikeTrain, best.kconv(dataTable.kmax(1)), [], 'truncate');
 time = (1:length(S1)) / best.Fs;
-plot(ax(3), time, S1)
+h = stem(ax(3), time, S1);
+set(h, 'Marker', 'none')
 xlabel(ax(3), 'time (s)')
-xlim(ax(3), [0 1])
+xlim(ax(3), [0 3])
 ylabel(ax(3), 'spike count')
 yyaxis(ax(3), 'right')
 plot(ax(3), time, S2)
@@ -223,9 +226,6 @@ end
 
 %% The Transfer Function
 % The transfer function $H(t)$ is defined as the impulse function, which when convolved with the speed signal $s(t)$ produces the firing rate $r(t)$. In the frequency domain $f$, this relationship is expressed as $H(f) = r(f)/s(f)$. The estimate is recovered with Welch's averaged periodogram.
-
-disp('ping!')
-return
 
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
 for ii = 1:length(transfer)
