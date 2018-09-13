@@ -207,11 +207,8 @@ yyaxis(ax(3), 'right')
 plot(ax(3), time, S2/best.Fs)
 ylabel(ax(3), 'firing rate (spikes/dt)')
 
-
-
 %% Distribution of Delays Between Animal Speed and Firing Rate
 % Phase delays were computed by aligning the animal speed and firing rate signals using the peak cross-correlation and reported in seconds. A positive phase delay means that the firing rate lags behind the animal speed. Inversely, a negative phase delay means that the firing rate anticipates the animal speed.
-
 
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 histogram(dataTable.delay(passing), 'BinMethod', 'fd', 'Normalization', 'probability')
@@ -266,6 +263,30 @@ if being_published
   snapnow
   delete(gcf)
 end
+
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
+clear ax
+
+ax(1) = subplot(2, 2, 1); hold on;
+plot(ax(1), best.Fs ./ transfreq{1}, mag2db(abs(fft(transfer{1}))), 'k')
+xlabel(ax(1), 'frequency (Hz)')
+ylabel(ax(1), 'amplitude (dB)')
+title(ax(1), 'transfer function (firing rate)')
+
+ax(2) = subplot(2, 2, 3); hold on;
+plot(ax(2), best.Fs ./ transfreq{1}, mag2db(abs(fft(transfer{1}))), 'k')
+xlabel(ax(2), 'frequency (Hz)')
+ylabel(ax(2), 'amplitude (dB)')
+title(ax(2), 'transfer function (spike train)')
+
+ax(3) = subplot(1, 2, 2); hold on;
+alpha = best.alpha(dataTable.kmax(1)) / sum(best.alpha(dataTable.kmax(1)));
+fill(ax(3), [[1/best.Fs 0.4] fliplr([1/best.Fs 0.4])], [max(alpha) max(alpha) 0 0], 'g', 'EdgeColor', 'none');
+plot(ax(3), (1:best.kmax)/best.Fs, alpha, 'k');
+xlabel(ax(3), 'bandwidth (s)')
+ylabel(ax(3), 'kernel density')
+title(ax(3), 'alpha function kernel')
+
 
 %% Version Info
 % The file that generated this document is called:
