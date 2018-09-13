@@ -28,6 +28,8 @@ catch
   frequency     = cell(height(dataTable), 1); % time series of firing rate
   transfer      = cell(height(dataTable), 1); % time series of the transfer function between speed and frequency
   transfreq     = cell(height(dataTable), 1); % frequencies corresponding to the transfer function
+  transfer2     = cell(height(dataTable), 1); % time series of the transfer function between speed and spike train
+  transfreq2    = cell(height(dataTable), 1); % frequencies corresponding to the transfer function
   for ii = 1:height(dataTable)
     textbar(ii, height(dataTable))
 
@@ -78,6 +80,7 @@ catch
     frequency{ii} = signal2;
     % (4) compute the delay between the animal speed and the firing rate
     [S1, S2, D]   = alignsignals(speed{ii}, frequency{ii}, 30, 'truncate');
+    [S1, S2, D]   = alignsignals(speed{ii}, best.spikeTrain, 30, 'truncate');
     [R, P]        = corrcoef(S1, S2, 'alpha', 0.05);
 
     % compute the estimated transfer function between speed and frequency
@@ -100,7 +103,7 @@ catch
 
   % save the data
   filename        = '/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin-2.mat';
-  save(filename, 'dataTable', 'speed', 'frequency', 'transfer', 'transfreq');
+  save(filename, 'dataTable', 'speed', 'frequency', 'transfer', 'transfreq', 'transfer2', 'transfreq2');
   disp(['[INFO] bandwidth data saved in ''' filename ''''])
 end % try/catch
 
@@ -120,7 +123,7 @@ std(dataTable.kmax(passing))
 
 % distribution of mean firing rates based on best-estimate bandwidths
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-plot(dataTable.kmax/best.Fs, best.Fs * dataTable.meanFiringRate, 'o')
+plot(dataTable.kmax/best.Fs, dataTable.meanFiringRate, 'o')
 xlabel('MLE/CV bandwidth parameter (s)')
 ylabel('mean firing rate (Hz)')
 title('mean firing rate by best bandwidth parameter')
@@ -228,12 +231,32 @@ end
 % The transfer function $H(t)$ is defined as the impulse function, which when convolved with the speed signal $s(t)$ produces the firing rate $r(t)$. In the frequency domain $f$, this relationship is expressed as $H(f) = r(f)/s(f)$. The estimate is recovered with Welch's averaged periodogram.
 
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
-for ii = 1:length(transfer)
-  plot(best.Fs ./ transfreq{ii}, mag2db(abs(fft(transfer{ii}))), 'LineWidth', 1)
+transfer_passing = transfer(passing);
+transfreq_passing = transfreq(passing);
+for ii = 1:length(transfer_passing)
+  plot(best.Fs ./ transfreq_passing{ii}, mag2db(abs(fft(transfer_passing{ii}))), 'LineWidth', 1)
 end
 ylabel('amplitude (dB)')
 xlabel('frequency (Hz)')
-title('transfer functions')
+title('transfer functions between speed and firing rate')
+
+prettyFig()
+box(gca, 'off')
+
+if being_published
+  snapnow
+  delete(gcf)
+end
+
+figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
+transfer_passing = transfer2(passing);
+transfreq_passing = transfreq2(passing);
+for ii = 1:length(transfer_passing)
+  plot(best.Fs ./ transfreq_passing{ii}, mag2db(abs(fft(transfer_passing{ii}))), 'LineWidth', 1)
+end
+ylabel('amplitude (dB)')
+xlabel('frequency (Hz)')
+title('transfer functions between speed and the spike train')
 
 prettyFig()
 box(gca, 'off')
