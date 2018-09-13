@@ -282,7 +282,7 @@ title(ax(2), 'transfer function (spike train)')
 ax(3) = subplot(1, 2, 2); hold on;
 alpha = best.alpha(dataTable.kmax(1)) / sum(best.alpha(dataTable.kmax(1)));
 fill(ax(3), [[1/best.Fs 0.4] fliplr([1/best.Fs 0.4])], [max(alpha) max(alpha) 0 0], 'g', 'EdgeColor', 'none');
-plot(ax(3), (1:best.kmax)/best.Fs, alpha, 'k');
+plot(ax(3), (1:dataTable.kmax(1))/best.Fs, alpha, 'k');
 xlabel(ax(3), 'bandwidth (s)')
 ylabel(ax(3), 'kernel density')
 title(ax(3), 'alpha function kernel')
