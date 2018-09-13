@@ -92,6 +92,7 @@ catch
     options.debug_mode            = true;
     options.method                = 'least-squares';
     [transfer{ii}, transfreq{ii}] = fitFilter2Data(speed{ii}, frequency{ii}, options);
+    [transfer2{ii}, transfreq2{ii}] = fitFilter2Data(speed{ii}, best.spikeTrain, options);
     % update the output vectors
     Pearson(ii)   = R(2);
     pValue(ii)    = P(1);
@@ -192,8 +193,8 @@ xlabel(ax(2), 'time (s)')
 xlim(ax(2), [300 303])
 ylabel(ax(2), 'spike count')
 yyaxis(ax(2), 'right')
-plot(ax(2), best.timestamps, best.kconv(dataTable.kmax(1)))
-ylabel(ax(2), 'firing rate (Hz)')
+plot(ax(2), best.timestamps, best.kconv(dataTable.kmax(1))/best.Fs)
+ylabel(ax(2), 'firing rate (spikes/dt)')
 % spike train and firing rate (without delay)
 [S1, S2] = alignsignals(best.spikeTrain, best.kconv(dataTable.kmax(1)), [], 'truncate');
 time = (1:length(S1)) / best.Fs;
@@ -203,8 +204,8 @@ xlabel(ax(3), 'time (s)')
 xlim(ax(3), [0 3])
 ylabel(ax(3), 'spike count')
 yyaxis(ax(3), 'right')
-plot(ax(3), time, S2)
-ylabel(ax(3), 'firing rate (Hz)')
+plot(ax(3), time, S2/best.Fs)
+ylabel(ax(3), 'firing rate (spikes/dt)')
 
 
 
