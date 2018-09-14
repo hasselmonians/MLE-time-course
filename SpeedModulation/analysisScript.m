@@ -90,7 +90,7 @@ catch
   end % for
 
   % package the computed data in a tabl and add to the extant dataTable
-  data2           = table(meanFiringRate, delay, linexpfit);
+  data2           = table(meanFiringRate, delay, linexpfit');
   dataTable       = [dataTable data2];
 
   % save the data
@@ -278,6 +278,13 @@ xlabel(ax(3), 'bandwidth (s)')
 ylabel(ax(3), 'kernel density')
 title(ax(3), 'alpha function kernel')
 
+prettyFig()
+box(gca, 'off')
+
+if being_published
+  snapnow
+  delete(gcf)
+end
 
 %% Version Info
 % The file that generated this document is called:
