@@ -33,23 +33,12 @@ catch
   for ii = 1:height(dataTable)
     textbar(ii, height(dataTable))
 
-    % load the Session object associated with these data
-    load(dataTable.filenames{ii})
-    root.cel = dataTable.cellnums(ii, :);
-    % clear the velocity
-    root.b_vel    = [];
-    % Kalman filter the animal velocity
-    root          = root.AppendKalmanVel;
-    % set the start time to zero
-    root          = root.FixTime;
-    % acquire the animal speed
-    speed{ii}     = root.svel;
+    % load the data
+    [best, root]  = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', false);
+    speed{ii}     = root.vel;
+    best.kernel   = 'alpha';
 
-    % set up the bandwidth estimator object
-    best          = BandwidthEstimator(root);
-    best.kernel   = 'alpha'; % this should already be true, but to be safe...
-
-    % force bandwidth to be odd
+    % force bandwidth to be odd (it should already be, but to be sure...)
     if mod(dataTable.kmax(ii), 2) == 0
       bandwidth   = dataTable.kmax(ii) + 1;
     else
@@ -75,13 +64,15 @@ catch
       % append the firing rate estimate with zeros
       signal2     = [zeros(abs(D), 1); signal(1:end-abs(D))'];
     else
-      signal2 = signal;
+      signal2     = signal;
     end
+    % define the frequency (firing rate estimate)
+    % as the filtered spike train with delay correction
     frequency{ii} = signal2;
     % (4) compute the delay between the animal speed and the firing rate
-    [S1, S2, D]   = alignsignals(speed{ii}, frequency{ii}, 30, 'truncate');
-    [S1, S2, D]   = alignsignals(speed{ii}, best.spikeTrain, 30, 'truncate');
-    [R, P]        = corrcoef(S1, S2, 'alpha', 0.05);
+    D             = finddelay(speed{ii}, frequency{ii}, 30);
+    % if delay is positive, frequency lags behind speed
+    delay(ii)     = D / best.Fs; % seconds
 
     % compute the estimated transfer function between speed and frequency
     % use Srinivas' function
@@ -93,13 +84,13 @@ catch
     options.method                = 'least-squares';
     [transfer{ii}, transfreq{ii}] = fitFilter2Data(speed{ii}, frequency{ii}, options);
     [transfer2{ii}, transfreq2{ii}] = fitFilter2Data(speed{ii}, best.spikeTrain, options);
-    % update the output vectors
-    Pearson(ii)   = R(2);
-    pValue(ii)    = P(1);
-    % if delay is positive, frequency lags behind speed
-    delay(ii)     = D / best.Fs; % seconds
+
+    % compute the linear and saturating exponential fits for speed vs. spike train
+    linexpfit(ii) = best.fit(root);
   end % for
-  data2           = table(meanFiringRate, Pearson, pValue, delay);
+
+  % package the computed data in a tabl and add to the extant dataTable
+  data2           = table(meanFiringRate, delay, linexpfit);
   dataTable       = [dataTable data2];
 
   % save the data
@@ -274,7 +265,7 @@ ylabel(ax(1), 'amplitude (dB)')
 title(ax(1), 'transfer function (firing rate)')
 
 ax(2) = subplot(2, 2, 3); hold on;
-plot(ax(2), best.Fs ./ transfreq{1}, mag2db(abs(fft(transfer{1}))), 'k')
+plot(ax(2), best.Fs ./ transfreq2{1}, mag2db(abs(fft(transfer2{1}))), 'k')
 xlabel(ax(2), 'frequency (Hz)')
 ylabel(ax(2), 'amplitude (dB)')
 title(ax(2), 'transfer function (spike train)')
