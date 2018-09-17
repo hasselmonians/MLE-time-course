@@ -109,9 +109,9 @@ best = BandwidthEstimator(root);
 
 % compute metrics
 passing = dataTable.kmax / best.Fs < 10;
-disp(['The mean bandwidth parameter < 10 s: ' num2str(mean(dataTable.kmax(passing))) ' s'])
-disp(['The standard deviation: ' num2str(oval(std(dataTable.kmax(passing)), 2)) ' s'])
-disp(['The percent of ''passing'' models: ' num2str(oval(100*sum(~passing)/length(dataTable.kmax) ,2)) '%'])
+disp(['The mean bandwidth parameter < 10 s: ' num2str(mean(dataTable.kmax(passing)) / best.Fs) ' s'])
+disp(['The standard deviation: ' num2str(oval(std(dataTable.kmax(passing) / best.Fs), 2)) ' s'])
+disp(['The percent of ''passing'' models: ' num2str(oval(100*sum(passing)/length(dataTable.kmax) ,2)) '%'])
 
 % distribution of mean firing rates based on best-estimate bandwidths
 figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
