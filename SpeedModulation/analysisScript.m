@@ -35,7 +35,7 @@ catch
 
     % load the data
     [best, root]  = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', false);
-    speed{ii}     = root.vel;
+    speed{ii}     = root.svel; % spatially-scaled speed in cm/s
     best.kernel   = 'alpha';
 
     % force bandwidth to be odd (it should already be, but to be sure...)
