@@ -114,7 +114,7 @@ disp(['The standard deviation: ' num2str(oval(std(dataTable.kmax(passing) / best
 disp(['The percent of ''passing'' models: ' num2str(oval(100*sum(passing)/length(dataTable.kmax) ,2)) '%'])
 
 % distribution of mean firing rates based on best-estimate bandwidths
-figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 plot(dataTable.kmax/best.Fs, dataTable.meanFiringRate, 'o')
 xlabel('MLE/CV bandwidth parameter (s)')
 ylabel('mean firing rate (Hz)')
@@ -129,7 +129,7 @@ if being_published
 end
 
 % mean firing rate by bandwidth bin
-figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 data2plot = [mean(dataTable.meanFiringRate(passing)) mean(dataTable.meanFiringRate(~passing))];
 err2plot  = [std(dataTable.meanFiringRate(passing)) std(dataTable.meanFiringRate(~passing))];
 barwitherr(err2plot, data2plot);
@@ -146,7 +146,7 @@ if being_published
 end
 
 % distribution of MLE/CV bandwidth parameters
-figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 histogram(dataTable.kmax/best.Fs, 'BinMethod', 'fd', 'Normalization', 'probability')
 xlabel('bandwidth (s)')
 title('distribution of MLE/CV bandwidth parameters')
@@ -162,7 +162,7 @@ end
 %% Why is Preprocessing the Firing Rate Estimate for Phase Delay Important?
 % Preprocessing the firing rate phase delay is necessary to confirm the phase relationship between the animal speed and the firing rate. Asymmetric kernels (such as the alpha function) introduce phase delays proportional to the bandwidth parameter. While the Prerau & Eden method of maximum-likelihood estimate with cross-validation is invariant to phase delay introduced by the kernel, delay must be eliminated before comparison to the animal speed (to avoid introduction spurious delays).
 
-figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+figure('OuterPosition',[0 0 1200 1500],'PaperUnits','points','PaperSize',[1200 1500]);
 clear ax
 for ii = 1:3
   ax(ii) = subplot(3, 1, ii); hold on
@@ -207,7 +207,7 @@ end
 %% Distribution of Delays Between Animal Speed and Firing Rate
 % Phase delays were computed by aligning the animal speed and firing rate signals using the peak cross-correlation and reported in seconds. A positive phase delay means that the firing rate lags behind the animal speed. Inversely, a negative phase delay means that the firing rate anticipates the animal speed.
 
-figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 histogram(dataTable.delay(passing), 'BinMethod', 'fd', 'Normalization', 'probability')
 xlabel('phase delay (s)')
 ylabel('count')
@@ -225,7 +225,7 @@ end
 %% The Transfer Function
 % The transfer function $H(t)$ is defined as the impulse function, which when convolved with the speed signal $s(t)$ produces the firing rate $r(t)$. In the frequency domain $f$, this relationship is expressed as $H(f) = r(f)/s(f)$. The estimate is recovered with Welch's averaged periodogram.
 
-figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
+figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
 transfer_passing = transfer(passing);
 transfreq_passing = transfreq(passing);
 for ii = 1:length(transfer_passing)
@@ -243,7 +243,7 @@ if being_published
   delete(gcf)
 end
 
-figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
+figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
 transfer_passing = transfer2(passing);
 transfreq_passing = transfreq2(passing);
 for ii = 1:length(transfer_passing)
@@ -261,7 +261,7 @@ if being_published
   delete(gcf)
 end
 
-figure('outerposition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
+figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
 clear ax
 
 ax(1) = subplot(2, 2, 1); hold on;
@@ -315,7 +315,7 @@ t = toc;
 
 %%
 % This file has the following external dependencies:
-% showDependencyHash(mfilename);
+showDependencyHash(mfilename);
 
 
 %%
