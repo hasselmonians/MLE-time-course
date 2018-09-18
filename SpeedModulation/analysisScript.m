@@ -198,6 +198,12 @@ yyaxis(ax(3), 'right')
 plot(ax(3), time, S2/best.Fs)
 ylabel(ax(3), 'firing rate (spikes/dt)')
 
+prettyFig()
+if being_published
+  snapnow
+  delete(gcf)
+end
+
 %% Distribution of Delays Between Animal Speed and Firing Rate
 % Phase delays were computed by aligning the animal speed and firing rate signals using the peak cross-correlation and reported in seconds. A positive phase delay means that the firing rate lags behind the animal speed. Inversely, a negative phase delay means that the firing rate anticipates the animal speed.
 
