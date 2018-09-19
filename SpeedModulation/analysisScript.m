@@ -91,6 +91,7 @@ catch
 
   % package the computed data in a tabl and add to the extant dataTable
   data2           = table(meanFiringRate, delay, linexpfit');
+  data2.Properties.VariableNames{end} = 'stats';
   dataTable       = [dataTable data2];
 
   % save the data
