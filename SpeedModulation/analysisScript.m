@@ -89,7 +89,7 @@ catch
     linexpfit(ii) = best.fit(root);
   end % for
 
-  % package the computed data in a tabl and add to the extant dataTable
+  % package the computed data in a table and add to the extant dataTable
   data2           = table(meanFiringRate, delay, linexpfit');
   data2.Properties.VariableNames{end} = 'stats';
   dataTable       = [dataTable data2];
