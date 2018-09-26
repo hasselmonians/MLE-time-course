@@ -301,6 +301,37 @@ if being_published
   delete(gcf)
 end
 
+%% Fits to the Data
+% Three models were fit to the data. The first is a linear fit. The second is a quadratic fit.
+% The third is a saturating exponential fit with a constant tail. An F-test was performed between
+% the linear and saturating exponential fits, and the p-value was obtained. A low p-value means that
+% the saturating exponential fit satisfies the data better.
+% The Akaike information criterion and the Bayesian information criterion were also computed.
+% A lower information criterion is better.
+% Furthermore, Pearson's R was computed.
+
+% make some pretty fits to the data
+qq = 1;
+for ii = 1:height(dataTable)
+  if dataTable.stats(ii).R > dataTable.stats(qq).R
+    qq = ii;
+  end
+end
+stats = dataTable.stats(qq);
+
+disp(stats)
+disp(stats.linear)
+disp(['The recording being plotted is # ' num2str(qq)])
+
+stats.linear.plot
+
+prettyFig()
+
+if being_published
+  snapnow
+  delete(gcf)
+end
+
 %% Version Info
 % The file that generated this document is called:
 disp(mfilename)
