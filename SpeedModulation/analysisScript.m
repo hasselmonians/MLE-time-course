@@ -108,8 +108,16 @@ load(dataTable.filenames{1});
 root.cel = dataTable.cellnums(1, :);
 best = BandwidthEstimator(root);
 
+% determine which recordings are "passing"
+% a "passing" recording has a kmax value of less than 10 seconds
+% a "passing" recording is also putatively speed-modulated (R^2 > 0.25)
+passing = zeros(height(dataTable), 1);
+for ii = 1:length(passing)
+  passing(ii) = dataTable.kmax(ii) / best.Fs < 10 && dataTable.stats(ii).R ^2 > 0.25;
+end
+passing = logical(passing);
+
 % compute metrics
-passing = dataTable.kmax / best.Fs < 10;
 disp(['The mean bandwidth parameter < 10 s: ' num2str(mean(dataTable.kmax(passing)) / best.Fs) ' s'])
 disp(['The standard deviation: ' num2str(oval(std(dataTable.kmax(passing) / best.Fs), 2)) ' s'])
 disp(['The percent of ''passing'' models: ' num2str(oval(100*sum(passing)/length(dataTable.kmax) ,2)) '%'])
