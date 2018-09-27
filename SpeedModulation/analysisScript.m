@@ -323,6 +323,7 @@ disp(stats)
 disp(stats.linear)
 disp(['The recording being plotted is #' num2str(qq)])
 
+figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
 stats.linear.plot
 
 prettyFig()
