@@ -321,7 +321,7 @@ stats = dataTable.stats(qq);
 
 disp(stats)
 disp(stats.linear)
-disp(['The recording being plotted is # ' num2str(qq)])
+disp(['The recording being plotted is #' num2str(qq)])
 
 stats.linear.plot
 
