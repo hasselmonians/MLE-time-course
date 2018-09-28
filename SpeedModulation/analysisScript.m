@@ -76,7 +76,7 @@ catch
 
     % compute the estimated transfer function between speed and frequency
     % use Srinivas' function
-    options.filter_length         = dataTable.kmax(ii);
+    options.filter_length         = 1000;
     options.reg                   = 1;
     options.normalise             = true;
     options.offset                = 0;
@@ -332,6 +332,51 @@ if being_published
   snapnow
   delete(gcf)
 end
+
+%% Testing the Transfer Function Estimate
+% The transfer function is the quotient of the output and input in Fourier space. That is,
+% the transfer function $H(f)$ is defined by the relationship $H(f) = \frac{Y(f)}{X(f)}$, where
+% $X$ is the input, $Y$ is the output, and $f$ is the frequency variable.
+
+for ii = [18, qq]
+  [best, root]  = RatCatcher.extract(dataTable, ii);
+  root          = root.AppendKalmanVel;
+  speed         = root.svel;
+  best.kernel   = 'alpha';
+  freq          = best.kconv(dataTable.kmax(ii));
+
+  % normalize the data
+  speed         = zscore(speed);
+  freq          = zscore(freq);
+
+  % compute the power spectra
+  [pSpeed, fSpeed]  = pwelch(speed, dataTable.kmax(ii), [], [], best.Fs, 'power');
+  [pFreq, fFreq]    = pwelch(freq, dataTable.kmax(ii), [], [], best.Fs, 'power');
+
+  % compute the transfer function
+  [txy, f]          = tfestimate(speed, freq, dataTable.kmax(ii), [], [], best.Fs);
+
+  figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
+  plot(fSpeed, mag2db(abs(pSpeed)));
+  plot(fFreq, mag2db(abs(pFreq)));
+  plot(f, mag2db(abs(txy)));
+  plot(f, mag2db(abs(txy .* pSpeed)))
+  ylabel('magnitude (dB)')
+  xlabel('frequency (Hz)')
+  if ii == 18
+    title('speed, frequency, and the transfer function for a low correlation cell')
+  else
+    title('speed, frequency, and the transfer function for a high correlation cell')
+  end
+  legend({'speed', 'firing rate', 'transfer function', 'speed * tf'})
+
+  prettyFig
+
+  if being_published
+    snapnow
+    delete(gcf)
+  end
+end % for
 
 %% Version Info
 % The file that generated this document is called:
