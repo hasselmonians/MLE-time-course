@@ -23,6 +23,7 @@ catch
   Pearson       = zeros(height(dataTable), 1);
   pValue        = zeros(height(dataTable), 1);
   delay         = zeros(height(dataTable), 1);
+  delay_uncorrected = zeros(height(dataTable), 1);
   meanFiringRate= zeros(height(dataTable), 1);
   speed         = cell(height(dataTable), 1); % time series of animal speed
   frequency     = cell(height(dataTable), 1); % time series of firing rate
@@ -55,6 +56,7 @@ catch
     signal        = best.kconv(bandwidth);
     % (2) compute the delay between the spike train (real data) and the firing rate estimate
     D             = finddelay(best.spikeTrain, signal, 30);
+    delay_uncorrected(ii) = D;
     % (3) pre-process the firing rate estimate to align with the spike train
     % this cannot be done with alignsignals because the function can shift the spike train
     if D > 0
@@ -90,7 +92,7 @@ catch
   end % for
 
   % package the computed data in a table and add to the extant dataTable
-  data2           = table(meanFiringRate, delay, linexpfit');
+  data2           = table(meanFiringRate, delay, delay_uncorrected, linexpfit');
   data2.Properties.VariableNames{end} = 'stats';
   dataTable       = [dataTable data2];
 
