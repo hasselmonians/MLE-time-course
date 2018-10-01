@@ -51,4 +51,4 @@ r.namespec = 'output-';
 dataTable = r.gather();
 dataTable = r.stitch(dataTable);
 
-save('/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin.mat', 'dataTable');
+save('/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin-hanning.mat', 'dataTable');
