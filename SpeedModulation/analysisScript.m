@@ -21,7 +21,6 @@ catch
   disp('[INFO] bandwidth data couldn''t be loaded, computing instead')
   load('/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin.mat')
   Pearson       = zeros(height(dataTable), 1);
-  pValue        = zeros(height(dataTable), 1);
   delay         = zeros(height(dataTable), 1);
   delay_uncorrected = zeros(height(dataTable), 1);
   meanFiringRate= zeros(height(dataTable), 1);
@@ -75,6 +74,8 @@ catch
     D             = finddelay(speed{ii}, frequency{ii}, 30);
     % if delay is positive, frequency lags behind speed
     delay(ii)     = D / best.Fs; % seconds
+    % compute Pearson's R
+    Pearson(ii)   = corr(vectorise(speed{ii}), vectorise(frequency{ii}));
 
     % compute the estimated transfer function between speed and frequency
     % use Srinivas' function
@@ -92,7 +93,7 @@ catch
   end % for
 
   % package the computed data in a table and add to the extant dataTable
-  data2           = table(meanFiringRate, delay, delay_uncorrected, linexpfit');
+  data2           = table(meanFiringRate, delay, delay_uncorrected, Pearson, linexpfit');
   data2.Properties.VariableNames{end} = 'stats';
   dataTable       = [dataTable data2];
 
