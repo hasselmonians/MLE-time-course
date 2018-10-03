@@ -84,6 +84,20 @@ if being_published
   delete(gcf)
 end
 
+%% Bandwidth Estimation
+% The MLE/CV method computes the optimal bandwidth parameter using the Prerau & Eden method.
+% The MCE/CV method uses the Pearson's R value without accounting for delay.
+
+% scatter plot of the bandwidths
+figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+plot(dataTable.kcorr(linear & passing), dataTable.kmax(linear & passing), 'o');
+xlabel('k_{corr}')
+ylabel('k_{max}')
+title('MLE/CV vs. correlation bandwidths')
+
+% fit linear model to the scatter plot
+fitlm(dataTable.kcorr(linear & passing), dataTable.kmax(linear & passing))
+
 %% Version Info
 % The file that generated this document is called:
 disp(mfilename)
