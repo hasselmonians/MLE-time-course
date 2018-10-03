@@ -84,6 +84,62 @@ if being_published
   delete(gcf)
 end
 
+%% Comparing Speed Modulation using Clustering
+
+% set up RatCatcher object
+r               = RatCatcher;
+r.experimenter  = 'Caitlin';
+r.analysis      = 'BandwidthEstimator';
+alphas          = {'A', 'B', 'C', 'D', 'E', 'F'};
+
+% store the indices mapping the clusters to the dataTable
+indices         = cell(length(alphas), 1);
+
+for ii = 1:length(alphas)
+  r.alpha       = alphas{ii};
+  indices{ii}   = r.index(dataTable);
+end
+
+% kmax between clusters
+for ii = 1:length(alphas)
+  data2plot(ii) = (1/best.Fs) * mean(dataTable.kmax(linear & passing & indices{ii}));
+  err2plot(ii)  = (1/best.Fs) * std(dataTable.kmax(linear & passing & indices{ii}));
+end
+
+figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+barwitherr(err2plot, data2plot);
+set(gca, 'XTickLabel', alphas)
+ylabel('k_{max} (s)')
+title('bandwidth parameter by cluster')
+
+prettyFig()
+box(gca, 'off')
+
+if being_published
+  snapnow
+  delete(gcf)
+end
+
+% meanFiringRate between clusters
+for ii = 1:length(alphas)
+  data2plot(ii) = (1/best.Fs) * mean(dataTable.meanFiringRate(linear & passing & indices{ii}));
+  err2plot(ii)  = (1/best.Fs) * std(dataTable.meanFiringRate(linear & passing & indices{ii}));
+end
+
+figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+barwitherr(err2plot, data2plot);
+set(gca, 'XTickLabel', alphas)
+ylabel('mean firing rate (Hz)')
+title('mean firing rate by cluster')
+
+prettyFig()
+box(gca, 'off')
+
+if being_published
+  snapnow
+  delete(gcf)
+end
+
 %% Bandwidth Estimation
 % The MLE/CV method computes the optimal bandwidth parameter using the Prerau & Eden method.
 % The MCE/CV method uses the Pearson's R value without accounting for delay.
