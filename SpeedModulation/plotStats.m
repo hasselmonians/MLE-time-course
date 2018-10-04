@@ -164,6 +164,14 @@ end
 % fit linear model to the scatter plot
 fitlm(dataTable.kcorr(linear & passing), dataTable.kmax(linear & passing))
 
+%% Outliers
+% Relevant outliers include cells which are flagged as speed-modulated but have
+% abnormally high bandwidth parameters. These cells have little variation in spikes/bin.
+
+disp('Indices of outlying cells:')
+disp(find(modulated & ~passing))
+disp(dataTable([find(modulated & ~passing)], :))
+
 %% Version Info
 % The file that generated this document is called:
 disp(mfilename)
