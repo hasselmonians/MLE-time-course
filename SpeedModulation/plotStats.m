@@ -153,6 +153,14 @@ xlabel('k_{corr}')
 ylabel('k_{max}')
 title('MLE/CV vs. correlation bandwidths')
 
+prettyFig()
+box(gca, 'off')
+
+if being_published
+  snapnow
+  delete(gcf)
+end
+
 % fit linear model to the scatter plot
 fitlm(dataTable.kcorr(linear & passing), dataTable.kmax(linear & passing))
 
