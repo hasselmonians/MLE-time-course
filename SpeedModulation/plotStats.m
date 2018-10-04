@@ -37,7 +37,7 @@ disp('Percent of speed-modulated cells')
 disp([num2str(sum(modulated)/length(modulated)*100) ' %'])
 
 % acquire the model fits for the modulated cells
-stats       = dataTable.stats(modulated);
+stats       = dataTable.stats;
 for ii = 1:length(stats)
   p(ii) = stats(ii).p;
 end
@@ -47,13 +47,13 @@ end
 % If $p <= 0.05$, then a saturating model could be appropriate. The Akaike and Bayesian
 % information criteria were also computed.
 
-linear      = p >= 0.05;
-passing     = dataTable.kmax(ii) / best.Fs < 10;
+linear      = vectorise(p >= 0.05);
+passing     = vectorise(dataTable.kmax / best.Fs < 10);
 
 % kmax between linear and saturating exponential models
 figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-data2plot = (1/best.Fs) * [mean(dataTable.kmax(linear & passing)) mean(dataTable.kmax(~linear & passing))];
-err2plot  = (1/best.Fs) * [std(dataTable.kmax(linear & passing)) std(dataTable.kmax(~linear & passing))];
+data2plot = (1/best.Fs) * [mean(dataTable.kmax(modulated & linear & passing)) mean(dataTable.kmax(modulated & ~linear & passing))];
+err2plot  = (1/best.Fs) * [std(dataTable.kmax(modulated & linear & passing)) std(dataTable.kmax(modulated & ~linear & passing))];
 barwitherr(err2plot, data2plot);
 set(gca, 'XTickLabel', {'linear', 'saturating exponential'})
 ylabel('k_{max} (s)')
@@ -69,8 +69,8 @@ end
 
 % mean firing rate between linear and saturating exponential models
 figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-data2plot = [mean(dataTable.meanFiringRate(linear & passing)) mean(dataTable.meanFiringRate(~linear & passing))];
-err2plot  = [std(dataTable.meanFiringRate(linear & passing)) std(dataTable.meanFiringRate(~linear & passing))];
+data2plot = [mean(dataTable.meanFiringRate(modulated & linear & passing)) mean(dataTable.meanFiringRate(modulated & ~linear & passing))];
+err2plot  = [std(dataTable.meanFiringRate(modulated & linear & passing)) std(dataTable.meanFiringRate(modulated & ~linear & passing))];
 barwitherr(err2plot, data2plot);
 set(gca, 'XTickLabel', {'linear', 'saturating exponential'})
 ylabel('mean firing rate (Hz)')
@@ -93,17 +93,19 @@ r.analysis      = 'BandwidthEstimator';
 alphas          = {'A', 'B', 'C', 'D', 'E', 'F'};
 
 % store the indices mapping the clusters to the dataTable
-indices         = cell(length(alphas), 1);
+indices         = zeros(height(dataTable), length(alphas));
 
 for ii = 1:length(alphas)
   r.alpha       = alphas{ii};
-  indices{ii}   = r.index(dataTable);
+  temp          = r.index(dataTable);
+  indices(temp, ii) = 1;
 end
+indices = logical(indices);
 
 % kmax between clusters
 for ii = 1:length(alphas)
-  data2plot(ii) = (1/best.Fs) * mean(dataTable.kmax(linear & passing & indices{ii}));
-  err2plot(ii)  = (1/best.Fs) * std(dataTable.kmax(linear & passing & indices{ii}));
+  data2plot(ii) = (1/best.Fs) * mean(dataTable.kmax(modulated & linear & passing & indices(:, ii)));
+  err2plot(ii)  = (1/best.Fs) * std(dataTable.kmax(modulated & linear & passing & indices(:, ii)));
 end
 
 figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
