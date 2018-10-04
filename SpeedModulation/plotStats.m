@@ -31,7 +31,7 @@ if being_published
   delete(gcf)
 end
 
-modulated   = dataTable.Pearson >= 0.2;
+modulated   = dataTable.Pearson >= 0.0795;
 
 disp('Percent of speed-modulated cells')
 disp([num2str(sum(modulated)/length(modulated)*100) ' %'])
@@ -104,8 +104,8 @@ indices = logical(indices);
 
 % kmax between clusters
 for ii = 1:length(alphas)
-  data2plot(ii) = (1/best.Fs) * mean(dataTable.kmax(modulated & linear & passing & indices(:, ii)));
-  err2plot(ii)  = (1/best.Fs) * std(dataTable.kmax(modulated & linear & passing & indices(:, ii)));
+  data2plot(ii) = (1/best.Fs) * mean(dataTable.kmax(modulated & passing & indices(:, ii)));
+  err2plot(ii)  = (1/best.Fs) * std(dataTable.kmax(modulated & passing & indices(:, ii)));
 end
 
 figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
