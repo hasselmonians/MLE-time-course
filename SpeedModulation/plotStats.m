@@ -34,7 +34,7 @@ end
 modulated   = dataTable.Pearson >= 0.0795;
 
 disp('Percent of speed-modulated cells')
-disp([num2str(sum(modulated)/length(modulated)*100) ' %'])
+disp([num2str(sum(modulated)/length(modulated)*100) '%'])
 
 % acquire the model fits for the modulated cells
 stats       = dataTable.stats;
