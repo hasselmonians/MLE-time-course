@@ -124,8 +124,8 @@ end
 
 % meanFiringRate between clusters
 for ii = 1:length(alphas)
-  data2plot(ii) = (1/best.Fs) * mean(dataTable.meanFiringRate(linear & passing & indices{ii}));
-  err2plot(ii)  = (1/best.Fs) * std(dataTable.meanFiringRate(linear & passing & indices{ii}));
+  data2plot(ii) = (1/best.Fs) * mean(dataTable.kmax(modulated & linear & passing & indices(:, ii)));
+  err2plot(ii)  = (1/best.Fs) * std(dataTable.kmax(modulated & linear & passing & indices(:, ii)));
 end
 
 figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
