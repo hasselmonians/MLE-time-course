@@ -85,14 +85,14 @@ if being_published
 end
 
 %% Why is Preprocessing the Firing Rate Estimate for Phase Delay Important?
-% Preprocessing the firing rate phase delay is necessary to confirm the phase relationship between the animal speed and the firing rate. Asymmetric kernels (such as the alpha function) introduce phase delays proportional to the bandwidth parameter. While the Prerau & Eden method of maximum-likelihood estimate with cross-validation is invariant to phase delay introduced by the kernel, delay must be eliminated before comparison to the animal speed (to avoid introduction spurious delays).
+% Preprocessing the firing rate temporal delay is necessary to confirm the temporal relationship between the animal speed and the firing rate. Asymmetric kernels (such as the alpha function) introduce temporal delays proportional to the bandwidth parameter. While the Prerau & Eden method of maximum-likelihood estimate with cross-validation is invariant to temporal delay introduced by the kernel, delay must be eliminated before comparison to the animal speed (to avoid introduction spurious delays).
 
 figure('OuterPosition',[0 0 1200 1500],'PaperUnits','points','PaperSize',[1200 1500]);
 clear ax
 for ii = 1:3
   ax(ii) = subplot(3, 1, ii); hold on
 end
-% phase delay vs. bandwidth parameter
+% temporal delay vs. bandwidth parameter
 band = 3:10:(30*best.Fs);
 best.kernel = 'alpha';
 for ii = 1:length(band)
@@ -130,14 +130,14 @@ if being_published
 end
 
 %% Distribution of Delays Between Animal Speed and Firing Rate
-% Phase delays were computed by aligning the animal speed and firing rate signals using the peak cross-correlation and reported in seconds. A positive phase delay means that the firing rate lags behind the animal speed. Inversely, a negative phase delay means that the firing rate anticipates the animal speed.
+% Phase delays were computed by aligning the animal speed and firing rate signals using the peak cross-correlation and reported in seconds. A positive temporal delay means that the firing rate lags behind the animal speed. Inversely, a negative temporal delay means that the firing rate anticipates the animal speed.
 
 figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
 histogram(dataTable.delay(passing), 'BinMethod', 'fd', 'Normalization', 'probability')
-xlabel('phase delay (s)')
+xlabel('temporal delay (s)')
 ylabel('count')
 xlim(mean(dataTable.delay(passing)) + 2 * [-std(dataTable.delay(passing)), std(dataTable.delay(passing))])
-title('distribution of phase delays from firing rate to animal speed')
+title('distribution of temporal delays from firing rate to animal speed')
 
 prettyFig()
 box(gca, 'off')
