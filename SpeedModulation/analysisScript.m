@@ -147,6 +147,11 @@ if being_published
 	delete(gcf)
 end
 
+% produce a gaussian mixed model to separate the "predictor" and "follower" cells
+delay 	= dataTable.delay(dataTable.delay > -1 & dataTable.delay < 1);
+gmm 		= BandwidthEstimator.unmix(delay, 2, 100, 0.1); % delay in [-1, 1], k = 2, N = 100, reg = 0.1
+[idx,nlogL,P,logpdf,d2] = gmm.cluster(delay);
+
 %% The Transfer Function
 % The transfer function $H(t)$ is defined as the impulse function, which when convolved with the speed signal $s(t)$ produces the firing rate $r(t)$. In the frequency domain $f$, this relationship is expressed as $H(f) = r(f)/s(f)$. The estimate is recovered with Welch's averaged periodogram.
 
