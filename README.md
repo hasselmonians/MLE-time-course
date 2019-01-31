@@ -14,6 +14,9 @@ The core files are packed within `BandwidthEstimator`. `MLE-time-course` contain
 
 The project is written in `MATLAB`. You will need to make sure that you have the following dependencies
 * The analysis structures (e.g. [BandwidthEstimator](https://github.com/hasselmonians/BandwidthEstimator)) expects [CMBHOME](https://github.com/hasselmonians/CMBHOME) `Session` objects for the constructor to work, though in theory, any spike train should be perfectly fine.
-* The [mtools](https://github.com/sg-s/srinivas.gs_mtools) by Srinivas Gorur-Shandilya is used extensively for handy little functions.
-* Stephen Cobeldick developed the `natsort` tools (included in `BandwidthEstimator`).
-* Michael Prerau and Uri Eden developed the MLE/CV bandwidth parameter estimation algorithm used in `BandwidthEstimator`.
+* [`mtools`](https://github.com/sg-s/srinivas.gs_mtools) by Srinivas Gorur-Shandilya is used extensively for handy little functions.
+* You will likely want [`RatCatcher`](https://github.com/hasselmonians/RatCatcher) to generate scripts to run batches of analyses on cluster computers (using `qsub`).
+
+### Acknowledgements
+* Stephen Cobeldick developed the `natsort` tools (included in `RatCatcher`).
+* Michael Prerau and Uri Eden developed the MLE/CV bandwidth parameter estimation algorithm (included in `BandwidthEstimator`).
