@@ -13,34 +13,34 @@ tic
 % A sample cell is loaded, using |CMBHOME| and the binned spike train with a time step of 0.02 s is acquired. A leave-one-out cross-validation strategy is performed on the likelihood analysis, yielding an estimate for the bandwidth parameter. The speed of the animal is computed by tracking two LEDs and smoothing the resulting recording with a Kalman filter.
 
 % load the data
-load('BandwidthEstimator-Caitlin-2.mat');
+load('~/Downloads/BandwidthEstimator-Caitlin-stats-hanning.mat');
 % load('BandwidthEstimator-Caitlin-2-hanning.mat');
 
 %% Distribution of Bandwidth Parameters
 % The best-estimate bandwidth parameters were computed using the Prerau & Eden algorithm for maximum-likelihood estimate with leave-one-out cross-validation. These values contrast with the standard in the literature of $k = 0.125$ s.
 
 % generate a BandwidthEstimator object
-load(dataTable.filenames{1});
+load(strrep(dataTable.filenames{1}, '/projectnb/', '/mnt/'));
 root.cel = dataTable.cellnums(1, :);
 best = BandwidthEstimator(root);
 
 % determine which recordings are "passing"
-% a "passing" recording has a kmax value of less than 10 seconds
+% a "passing" recording has a kmax value of less than 30 seconds
 % a "passing" recording is also putatively speed-modulated (R^2 > 0.25)
 passing = zeros(height(dataTable), 1);
 for ii = 1:length(passing)
-  passing(ii) = dataTable.kmax(ii) / best.Fs < 10 && dataTable.stats(ii).R ^2 > 0.25;
+  passing(ii) = dataTable.kmax(ii) / best.Fs < 30 && dataTable.stats(ii).R ^2 > 0.25;
 end
 passing = logical(passing);
 
 % compute metrics
-disp(['The mean bandwidth parameter < 10 s: ' num2str(mean(dataTable.kmax(passing)) / best.Fs) ' s'])
+disp(['The mean bandwidth parameter < 30 s: ' num2str(mean(dataTable.kmax(passing)) / best.Fs) ' s'])
 disp(['The standard deviation: ' num2str(oval(std(dataTable.kmax(passing) / best.Fs), 2)) ' s'])
 disp(['The percent of ''passing'' models: ' num2str(oval(100*sum(passing)/length(dataTable.kmax) ,2)) '%'])
 
 % distribution of mean firing rates based on best-estimate bandwidths
 figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-plot(dataTable.kmax/best.Fs, dataTable.meanFiringRate, 'o')
+plot(dataTable.kmax(passing)/best.Fs, dataTable.meanFiringRate(passing), 'o')
 xlabel('MLE/CV bandwidth parameter (s)')
 ylabel('mean firing rate (Hz)')
 title('mean firing rate by best bandwidth parameter')
@@ -72,7 +72,7 @@ end
 
 % distribution of MLE/CV bandwidth parameters
 figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-histogram(dataTable.kmax/best.Fs, 'BinMethod', 'fd', 'Normalization', 'probability')
+histogram(dataTable.kmax(passing)/best.Fs, 'BinMethod', 'fd', 'Normalization', 'probability')
 xlabel('bandwidth (s)')
 title('distribution of MLE/CV bandwidth parameters')
 
@@ -149,7 +149,7 @@ end
 
 % produce a gaussian mixed model to separate the "predictor" and "follower" cells
 delay 	= dataTable.delay(dataTable.delay > -1 & dataTable.delay < 1);
-gmm 		= BandwidthEstimator.unmix(delay, 2, 100, 0.1); % delay in [-1, 1], k = 2, N = 100, reg = 0.1
+gmm 		= BandwidthEstimator.unmixGaussians(delay, 2, 100, 0.1); % delay in [-1, 1], k = 2, N = 100, reg = 0.1
 [idx,nlogL,P,logpdf,d2] = gmm.cluster(delay);
 
 %% The Transfer Function
@@ -290,7 +290,6 @@ for ii = [18, qq]
     title('speed, frequency, and the transfer function for a high correlation cell')
   end
   legend({'speed', 'firing rate', 'transfer function', 'speed * tf'})
-
   prettyFig
 
   if being_published
@@ -300,29 +299,7 @@ for ii = [18, qq]
 end % for
 
 %% Version Info
-% The file that generated this document is called:
-disp(mfilename)
-
-
-%%
-% and its md5 hash is:
-Opt.Input = 'file';
-disp(dataHash(strcat(mfilename,'.m'),Opt))
-
-
-%%
-% This file should be in this commit:
-[status,m]=unix('git rev-parse HEAD');
-if ~status
-	disp(m)
-end
-
-t = toc;
-
-
-%%
-% This file has the following external dependencies:
-showDependencyHash(mfilename);
+pFooter;
 
 
 %%
