@@ -304,4 +304,5 @@ pFooter;
 
 %%
 % This document was built in:
+t = toc;
 disp(strcat(oval(t,3),' seconds.'))
