@@ -73,7 +73,7 @@ xlabel(ax(3), 'Hanning Bandwidth Size (s)');
 ylabel(ax(3), 'Likelihood');
 title(ax(3), 'Bandwidth Likelihood');
 
-prettyFig()
+figlib.pretty()
 
 for ii = 1:length(ax)
   box(ax(ii), 'off');
@@ -117,7 +117,7 @@ stem(ax(5), t, spikeTrain(1:nEpochSteps), 'Color', [0 0 0], 'marker', 'none', 'L
 set(ax(5), 'color', 'none', 'yaxislocation', 'right', 'xticklabel', '', 'ylim', [0 2*max(spikeTrain)])
 ylabel(ax(5), 'Spike Count');
 
-prettyFig()
+figlib.pretty()
 
 for ii = 4:5
   box(ax(ii), 'off');

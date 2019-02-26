@@ -53,7 +53,7 @@ xlabel('time steps')
 ylabel('firing rate (Hz)')
 legend({'data', 'hanning', 'alpha'})
 
-prettyFig()
+figlib.pretty()
 box off
 
 if being_published
@@ -74,7 +74,7 @@ ylabel('kernel density (a.u.)')
 xlim([-50 50])
 legend({'hanning', 'alpha', 'alpha2'})
 
-prettyFig()
+figlib.pretty()
 box off
 
 if being_published
@@ -97,7 +97,7 @@ xlim([0 10])
 ylim([0 80])
 legend({'hanning', 'alpha', 'alpha2'})
 
-prettyFig()
+figlib.pretty()
 box off
 
 if being_published

@@ -45,7 +45,7 @@ xlabel('MLE/CV bandwidth parameter (s)')
 ylabel('mean firing rate (Hz)')
 title('mean firing rate by best bandwidth parameter')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -62,7 +62,7 @@ set(gca, 'XTickLabel', {'k \leq 10 s', 'k > 10 s'})
 ylabel('mean firing rate (Hz)')
 title('mean firing rate by bandwidth category')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -76,7 +76,7 @@ histogram(dataTable.kmax/best.Fs, 'BinMethod', 'fd', 'Normalization', 'probabili
 xlabel('bandwidth (s)')
 title('distribution of MLE/CV bandwidth parameters')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -123,7 +123,7 @@ yyaxis(ax(3), 'right')
 plot(ax(3), time, S2/best.Fs)
 ylabel(ax(3), 'firing rate (spikes/dt)')
 
-prettyFig()
+figlib.pretty()
 if being_published
   snapnow
   delete(gcf)
@@ -139,7 +139,7 @@ ylabel('count')
 xlim(mean(dataTable.delay(passing)) + 2 * [-std(dataTable.delay(passing)), std(dataTable.delay(passing))])
 title('distribution of temporal delays from firing rate to animal speed')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -165,7 +165,7 @@ ylabel('amplitude (dB)')
 xlabel('frequency (Hz)')
 title('transfer functions between speed and firing rate')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -183,7 +183,7 @@ ylabel('amplitude (dB)')
 xlabel('frequency (Hz)')
 title('transfer functions between speed and the spike train')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -214,7 +214,7 @@ xlabel(ax(3), 'bandwidth (s)')
 ylabel(ax(3), 'kernel density')
 title(ax(3), 'alpha function kernel')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -247,7 +247,7 @@ disp(['The recording being plotted is #' num2str(qq)])
 figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]); hold on
 stats.linear.plot
 
-prettyFig()
+figlib.pretty()
 
 if being_published
   snapnow
@@ -291,7 +291,7 @@ for ii = [18, qq]
   end
   legend({'speed', 'firing rate', 'transfer function', 'speed * tf'})
 
-  prettyFig
+  figlib.pretty
 
   if being_published
     snapnow

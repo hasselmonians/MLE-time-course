@@ -23,7 +23,7 @@ xlabel('Pearson''s R')
 ylabel('count')
 title('Distribution of Speed Score')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -59,7 +59,7 @@ set(gca, 'XTickLabel', {'linear', 'saturating exponential'})
 ylabel('k_{max} (s)')
 title('bandwidth parameter by model category')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -76,7 +76,7 @@ set(gca, 'XTickLabel', {'linear', 'saturating exponential'})
 ylabel('mean firing rate (Hz)')
 title('mean firing rate by model category')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -114,7 +114,7 @@ set(gca, 'XTickLabel', alphas)
 ylabel('k_{max} (s)')
 title('bandwidth parameter by cluster')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -134,7 +134,7 @@ set(gca, 'XTickLabel', alphas)
 ylabel('mean firing rate (Hz)')
 title('mean firing rate by cluster')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
@@ -153,7 +153,7 @@ xlabel('k_{corr}')
 ylabel('k_{max}')
 title('MLE/CV vs. correlation bandwidths')
 
-prettyFig()
+figlib.pretty()
 box(gca, 'off')
 
 if being_published
