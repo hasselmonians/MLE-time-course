@@ -290,12 +290,8 @@ for ii = [18, qq]
     title('speed, frequency, and the transfer function for a high correlation cell')
   end
   legend({'speed', 'firing rate', 'transfer function', 'speed * tf'})
-<<<<<<< HEAD
 
   figlib.pretty
-=======
-  prettyFig
->>>>>>> refs/remotes/origin/master
 
   if being_published
     snapnow
