@@ -1,35 +1,49 @@
 
 
-r = RatCatcher;
+r                 = RatCatcher; % RatCatcher object establishment
 
-r.experimenter = 'Caitlin';
-r.alphanumeric = 'A';
-r.analysis = 'BandwidthEstimator';
-r.localPath = '/Users/pranavnambiar/Desktop/CODE_FILES/...';
-
-r.namespec = ('output-');
-
+dataTable         = r.gather();
+dataTable         = r.stitch(dataTable);
 r.batchify();
 
-
-
-
 tic;
-load('BandwidthEstimator-Caitlin-A-*');
-dataTable = r.gather();
-dataStitch = r.stitch(dataTable);
+figure(1)
+histogram(dataTable.kmax, (0:20:2000));
+xlabel('kmax (Bandwidth)');
+ylabel('# of Specific kmax Observed');
+figure(2);
+histogram(dataTable.kcorr, (0:20:2000));
 
-[method, root] = r.extract(dataTable, 1, r.analysis);
-histogram(dataTable);
+% for j = 1:height(dataTable) ---> do this to find method & root for every
+%                                  index so that BandwidthEstimator properties are computed for each
+%                                  recording for each cell
+[method, root]    = r.extract(dataTable, 1, r.analysis, true);
+b                 = BandwidthEstimator(root);
+
+sorted_cellnums   = sort(dataTable.cellnums(:, 2)); % sorts cellnums in order for all cells to be in order
+index             = zeros(height(dataTable, 1));
+
+num_cells         = [1:1:max(sorted_cellnums)];
+
+for ii = num_cells
+    for i = 1:height(dataTable)
+        if numcells(ii) == dataTable.cellnums(i, 2)
+            index(i) = i; % makes index matrix with indices of each cell (in order of cell number)
+        else
+        end
+    end
+end
+
+cells_matrix = cat(2, sorted_cellnums, index); % creates sorted cells with their corresponding dataTable indices
 
 
-stats = root.fit(dataTable);
+figure(3);
+histogram(b.spikeTrain, 2000);
 
-b = BandwidthEstimator(root);
-spikeTrain = getSpikeTrain(b.spikeTimes, b.timestamps);
-plot(spikeTrain);
-toc;
 
-[estimate, kmax, loglikelihoods, bandwidths, CI, kcorr, correlation] = b.cvKernel;
-kmax
-kcorr
+firing_rate = sum(b.spikeTimes); % check on this
+
+% possible pre-processing of data (underneath code) ---> can use taper.m
+%                                                        function instead
+% for i = 1:length(dataTable.kmax)
+    
