@@ -47,8 +47,8 @@ end
 % If $p <= 0.05$, then a saturating model could be appropriate. The Akaike and Bayesian
 % information criteria were also computed.
 
-linear      = vectorise(p >= 0.05);
-passing     = vectorise(dataTable.kmax / best.Fs < 10);
+linear      = corelib.vectorise(p >= 0.05);
+passing     = corelib.vectorise(dataTable.kmax / best.Fs < 10);
 
 % kmax between linear and saturating exponential models
 figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);

@@ -64,7 +64,7 @@ catch
     % if delay is positive, frequency lags behind speed
     delay(ii)     = D / best.Fs; % seconds
     % compute Pearson's R
-    Pearson(ii)   = corr(vectorise(speed{ii}), vectorise(frequency{ii}));
+    Pearson(ii)   = corr(corelib.vectorise(speed{ii}), corelib.vectorise(frequency{ii}));
 
     % compute the estimated transfer function between speed and frequency
     % use Srinivas' function
@@ -154,7 +154,7 @@ catch
     % if delay is positive, frequency lags behind speed
     delay(ii)     = D / best.Fs; % seconds
     % compute Pearson's R
-    Pearson(ii)   = corr(vectorise(speed{ii}), vectorise(frequency{ii}));
+    Pearson(ii)   = corr(corelib.vectorise(speed{ii}), corelib.vectorise(frequency{ii}));
 
     % compute the estimated transfer function between speed and frequency
     % use Srinivas' function
