@@ -17,7 +17,7 @@ if ~exist('corrSpeedBand.mat', 'file')
   logmaxcorr  = zeros(height(dataTable), 1);
   delay       = zeros(height(dataTable), 1);
   for ii = 1:height(dataTable)
-    textbar(ii, height(dataTable))
+    corelib.textbar(ii, height(dataTable))
     % load the specific data file
     load(dataTable.filenames{ii})
     root.cel  = dataTable.cellnums(ii, :);

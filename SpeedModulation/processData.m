@@ -20,7 +20,7 @@ catch
   transfer2     = cell(height(dataTable), 1); % time series of the transfer function between speed and spike train
   transfreq2    = cell(height(dataTable), 1); % frequencies corresponding to the transfer function
   for ii = 1:height(dataTable)
-    textbar(ii, height(dataTable))
+    corelib.textbar(ii, height(dataTable))
 
     % load the data
     [best, root]  = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', false);
@@ -110,7 +110,7 @@ catch
   transfer2     = cell(height(dataTable), 1); % time series of the transfer function between speed and spike train
   transfreq2    = cell(height(dataTable), 1); % frequencies corresponding to the transfer function
   for ii = 1:height(dataTable)
-    textbar(ii, height(dataTable))
+    corelib.textbar(ii, height(dataTable))
 
     % load the data
     [best, root]  = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', false);
