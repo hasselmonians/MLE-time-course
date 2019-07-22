@@ -1,4 +1,5 @@
 % run this script to generate the batchfile
+% NOTE: ths script is deprecated
 
 runLocal = true;
 
