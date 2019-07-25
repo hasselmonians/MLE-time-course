@@ -21,7 +21,7 @@ r.protocol    = 'BandwidthEstimator';
 r.project     = 'hasselmogrp';
 
 % create the batched files on the cluster
-r.batchify();
+r = r.batchify();
 
 %% Run the simulation
 
