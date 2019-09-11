@@ -7,4 +7,4 @@ r.expID       = {'Caitlin', 'A'; 'Caitlin', 'B'; 'Caitlin', 'C'; 'Caitlin', 'D';
 r.verbose     = true;
 
 r = r.batchify();
-save(fullfile(r.localpath, 'RatCatcher.mat'), 'r')
+save(fullfile(r.localpath, 'Caitlin-BandwidthEstimator-RatCatcher.mat'), 'r')
