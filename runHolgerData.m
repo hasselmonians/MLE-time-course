@@ -1,16 +1,11 @@
 r = RatCatcher;
 
 r.expID = 'Holger';
-r.remotepath = '/projectnb/hasselmogrp/hoyland/LNLModel/cluster/';
-r.localpath = '/mnt/hasselmogrp/hoyland/LNLModel/cluster/';
-r.protocol = 'LNLModel';
+r.remotepath = '/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster/';
+r.localpath = '/mnt/hasselmogrp/hoyland/MLE-time-course/cluster/';
+r.protocol = 'BandwidthEstimator';
 r.project = 'hasselmogrp';
 r.verbose = true;
-
-load('/mnt/hasselmogrp/hoyland/data/holger/data-unmerged.mat')
-
-r.filenames = filenames;
-r.filecodes = filecodes;
 
 return
 
