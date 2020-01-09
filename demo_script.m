@@ -11,8 +11,8 @@ r             = RatCatcher;
 r.expID       = {'Caitlin', 'A'};
 
 % give the remote and local
-r.remotepath  = '/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster';
-r.localpath   = '/mnt/hasselmogrp/hoyland/MLE-time-course/cluster';
+r.remotepath  = '/projectnb/hasselmogrp/ahoyland/MLE-time-course/cluster';
+r.localpath   = '/mnt/hasselmogrp/ahoyland/MLE-time-course/cluster';
 
 % specify the protocol we want to use
 r.protocol    = 'BandwidthEstimator';

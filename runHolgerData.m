@@ -1,8 +1,8 @@
 r = RatCatcher;
 
 r.expID = 'Holger';
-r.remotepath = '/projectnb/hasselmogrp/hoyland/MLE-time-course/cluster/';
-r.localpath = '/mnt/hasselmogrp/hoyland/MLE-time-course/cluster/';
+r.remotepath = '/projectnb/hasselmogrp/ahoyland/MLE-time-course/cluster/';
+r.localpath = '/mnt/hasselmogrp/ahoyland/MLE-time-course/cluster/';
 r.protocol = 'BandwidthEstimator';
 r.project = 'hasselmogrp';
 r.verbose = true;
