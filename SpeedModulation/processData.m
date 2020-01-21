@@ -23,7 +23,8 @@ catch
     corelib.textbar(ii, height(dataTable))
 
     % load the data
-    [best, root]  = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', false);
+    % [best, root]  = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', false);
+    [best, root] = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', @(x) preprocess_fcn(x), true)
     speed{ii}     = root.svel; % spatially-scaled speed in cm/s
     best.kernel   = 'alpha';
 
@@ -113,7 +114,7 @@ catch
     corelib.textbar(ii, height(dataTable))
 
     % load the data
-    [best, root]  = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', false);
+    [best, root] = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', @(x) preprocess_fcn(x), true)
     speed{ii}     = root.svel; % spatially-scaled speed in cm/s
     best.kernel   = 'hanning';
 
@@ -181,3 +182,8 @@ catch
   save(filename, 'dataTable', 'speed', 'frequency', 'transfer', 'transfreq', 'transfer2', 'transfreq2');
   disp(['[INFO] bandwidth data saved in ''' filename ''''])
 end % try/catch
+
+function x = preprocess_fcn(x)
+  x = strrep(x, 'projectnb', 'mnt');
+  x = strrep(x, 'hoyland', 'ahoyland');
+end % function
