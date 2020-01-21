@@ -3,12 +3,12 @@
 
 % load the bandwidth data
 try
-  load('/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin-2.mat')
+  load('~/code/MLE-time-course/BandwidthEstimator-Caitlin-2.mat')
   disp('[INFO] load the bandwidth data')
 catch
   % if the bandwidth data can't be loaded, it will be computed instead
   disp('[INFO] bandwidth data couldn''t be loaded, computing instead')
-  load('/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin.mat')
+  load('~/code/MLE-time-course/BandwidthEstimator-Caitlin.mat')
   Pearson       = zeros(height(dataTable), 1);
   delay         = zeros(height(dataTable), 1);
   delay_uncorrected = zeros(height(dataTable), 1);
@@ -87,18 +87,18 @@ catch
   dataTable       = [dataTable data2];
 
   % save the data
-  filename        = '/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin-2.mat';
+  filename        = '~/code/MLE-time-course/BandwidthEstimator-Caitlin-2.mat';
   save(filename, 'dataTable', 'speed', 'frequency', 'transfer', 'transfreq', 'transfer2', 'transfreq2');
   disp(['[INFO] bandwidth data saved in ''' filename ''''])
 end % try/catch
 
 try
-  load('/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin-2-hanning.mat')
+  load('~/code/MLE-time-course/BandwidthEstimator-Caitlin-2-hanning.mat')
   disp('[INFO] load the bandwidth data')
 catch
   % if the bandwidth data can't be loaded, it will be computed instead
   disp('[INFO] bandwidth data couldn''t be loaded, computing instead')
-  load('/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin-hanning.mat')
+  load('~/code/MLE-time-course/BandwidthEstimator-Caitlin-hanning.mat')
   Pearson       = zeros(height(dataTable), 1);
   delay         = zeros(height(dataTable), 1);
   delay_uncorrected = zeros(height(dataTable), 1);
@@ -177,7 +177,7 @@ catch
   dataTable       = [dataTable data2];
 
   % save the data
-  filename        = '/home/ahoyland/code/MLE-time-course/BandwidthEstimator-Caitlin-2-hanning.mat';
+  filename        = '~/code/MLE-time-course/BandwidthEstimator-Caitlin-2-hanning.mat';
   save(filename, 'dataTable', 'speed', 'frequency', 'transfer', 'transfreq', 'transfer2', 'transfreq2');
   disp(['[INFO] bandwidth data saved in ''' filename ''''])
 end % try/catch
