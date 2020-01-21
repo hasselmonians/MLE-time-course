@@ -1,5 +1,14 @@
 % process the data and save it in Caitlin-BandwidthEstimator-2
 
+% This scripts requires the following packages:
+%   * srinivas.gs_mtools
+%   * CMBHOME
+%   * RatCatcher
+%   * BandwidthEstimator
+
+% This script assumes that you have the cluster mounted to your drive at /mnt/hasselmogrp.
+% Furthermore, most of the paths are hard-coded. Sorry about that.
+
 
 % load the bandwidth data
 try
