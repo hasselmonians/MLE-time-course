@@ -24,10 +24,6 @@ catch
   meanFiringRate= zeros(height(dataTable), 1);
   speed         = cell(height(dataTable), 1); % time series of animal speed
   frequency     = cell(height(dataTable), 1); % time series of firing rate
-  transfer      = cell(height(dataTable), 1); % time series of the transfer function between speed and frequency
-  transfreq     = cell(height(dataTable), 1); % frequencies corresponding to the transfer function
-  transfer2     = cell(height(dataTable), 1); % time series of the transfer function between speed and spike train
-  transfreq2    = cell(height(dataTable), 1); % frequencies corresponding to the transfer function
   for ii = 1:height(dataTable)
     corelib.textbar(ii, height(dataTable))
 
@@ -76,17 +72,6 @@ catch
     % compute Pearson's R
     Pearson(ii)   = corr(corelib.vectorise(speed{ii}), corelib.vectorise(frequency{ii}));
 
-    % compute the estimated transfer function between speed and frequency
-    % use Srinivas' function
-    options.filter_length         = 1000;
-    options.reg                   = 1;
-    options.normalise             = true;
-    options.offset                = 0;
-    options.debug_mode            = true;
-    options.method                = 'least-squares';
-    [transfer{ii}, transfreq{ii}] = fitFilter2Data(speed{ii}, frequency{ii}, options);
-    [transfer2{ii}, transfreq2{ii}] = fitFilter2Data(speed{ii}, best.spikeTrain, options);
-
     % compute the linear and saturating exponential fits for speed vs. spike train
     linexpfit(ii) = best.fit(root);
   end % for
@@ -98,7 +83,7 @@ catch
 
   % save the data
   filename        = '~/code/MLE-time-course/Caitlin-BandwidthEstimator-2.mat';
-  save(filename, 'dataTable', 'speed', 'frequency', 'transfer', 'transfreq', 'transfer2', 'transfreq2');
+  save(filename, 'dataTable', 'speed', 'frequency');
   disp(['[INFO] bandwidth data saved in ''' filename ''''])
 end % try/catch
 
@@ -115,10 +100,7 @@ catch
   meanFiringRate= zeros(height(dataTable), 1);
   speed         = cell(height(dataTable), 1); % time series of animal speed
   frequency     = cell(height(dataTable), 1); % time series of firing rate
-  transfer      = cell(height(dataTable), 1); % time series of the transfer function between speed and frequency
-  transfreq     = cell(height(dataTable), 1); % frequencies corresponding to the transfer function
-  transfer2     = cell(height(dataTable), 1); % time series of the transfer function between speed and spike train
-  transfreq2    = cell(height(dataTable), 1); % frequencies corresponding to the transfer function
+
   for ii = 1:height(dataTable)
     corelib.textbar(ii, height(dataTable))
 
@@ -188,7 +170,7 @@ catch
 
   % save the data
   filename        = '~/code/MLE-time-course/Caitlin-BandwidthEstimator-2-hanning.mat';
-  save(filename, 'dataTable', 'speed', 'frequency', 'transfer', 'transfreq', 'transfer2', 'transfreq2');
+  save(filename, 'dataTable', 'speed', 'frequency');
   disp(['[INFO] bandwidth data saved in ''' filename ''''])
 end % try/catch
 
