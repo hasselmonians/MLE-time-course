@@ -1,6 +1,6 @@
 % determine whether cells are speed modulated and visualize the data
 
-pHeader;
+pdflib.header;
 tic;
 
 % load the data (alpha kernel)
