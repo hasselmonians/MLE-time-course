@@ -1,4 +1,4 @@
-% process the data and save it in Caitlin-BandwidthEstimator-2
+% process the data and save it in data-Caitlin-BandwidthEstimator-2
 
 % This scripts requires the following packages:
 %   * srinivas.gs_mtools
@@ -12,12 +12,12 @@
 
 % load the bandwidth data
 try
-  load('~/code/MLE-time-course/Caitlin-BandwidthEstimator-2.mat')
+  load('~/code/MLE-time-course/data-Caitlin-BandwidthEstimator-2.mat')
   disp('[INFO] load the bandwidth data')
 catch
   % if the bandwidth data can't be loaded, it will be computed instead
   disp('[INFO] bandwidth data couldn''t be loaded, computing instead')
-  load('~/code/MLE-time-course/Caitlin-BandwidthEstimator.mat')
+  load('~/code/MLE-time-course/data-Caitlin-BandwidthEstimator.mat')
   Pearson       = zeros(height(dataTable), 1);
   delay         = zeros(height(dataTable), 1);
   delay_uncorrected = zeros(height(dataTable), 1);
@@ -82,18 +82,18 @@ catch
   dataTable       = [dataTable data2];
 
   % save the data
-  filename        = '~/code/MLE-time-course/Caitlin-BandwidthEstimator-2.mat';
+  filename        = '~/code/MLE-time-course/data-Caitlin-BandwidthEstimator-2.mat';
   save(filename, 'dataTable', 'speed', 'frequency');
   disp(['[INFO] bandwidth data saved in ''' filename ''''])
 end % try/catch
 
 try
-  load('~/code/MLE-time-course/Caitlin-BandwidthEstimator-2-hanning.mat')
+  load('~/code/MLE-time-course/data-Caitlin-BandwidthEstimator-2-hanning.mat')
   disp('[INFO] load the bandwidth data')
 catch
   % if the bandwidth data can't be loaded, it will be computed instead
   disp('[INFO] bandwidth data couldn''t be loaded, computing instead')
-  load('~/code/MLE-time-course/Caitlin-BandwidthEstimator-hanning.mat')
+  load('~/code/MLE-time-course/data-Caitlin-BandwidthEstimator-hanning.mat')
   Pearson       = zeros(height(dataTable), 1);
   delay         = zeros(height(dataTable), 1);
   delay_uncorrected = zeros(height(dataTable), 1);
@@ -169,7 +169,7 @@ catch
   dataTable       = [dataTable data2];
 
   % save the data
-  filename        = '~/code/MLE-time-course/Caitlin-BandwidthEstimator-2-hanning.mat';
+  filename        = '~/code/MLE-time-course/data-Caitlin-BandwidthEstimator-2-hanning.mat';
   save(filename, 'dataTable', 'speed', 'frequency');
   disp(['[INFO] bandwidth data saved in ''' filename ''''])
 end % try/catch
