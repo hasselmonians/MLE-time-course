@@ -8,8 +8,8 @@
 
 % This script assumes that you have the cluster mounted to your drive at /mnt/hasselmogrp.
 
-data_filepath               = fullfile(pathlib.strip(2), 'data', 'data-Caitlin-BandwidthEstimator.mat');
-processed_data_filepath     = fullfile(pathlib.strip(2), 'data', 'data-Caitlin-BandwidthEstimator-processed.mat');
+data_filepath               = fullfile(pathlib.strip(mfilename('fullpath'), 2), 'data', 'data-Caitlin-BandwidthEstimator.mat');
+processed_data_filepath     = fullfile(pathlib.strip(mfilename('fullpath'), 2), 'data', 'data-Caitlin-BandwidthEstimator-processed.mat');
 
 % load the bandwidth data
 try
