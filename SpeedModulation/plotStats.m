@@ -92,8 +92,8 @@ end
 
 % set up RatCatcher object
 r               = RatCatcher;
-r.experimenter  = 'Caitlin';
-r.analysis      = 'BandwidthEstimator';
+r.expID         = 'Caitlin';
+r.protocol      = 'BandwidthEstimator';
 alphas          = {'A', 'B', 'C', 'D', 'E', 'F'};
 
 % store the indices mapping the clusters to the dataTable
