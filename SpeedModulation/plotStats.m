@@ -189,8 +189,7 @@ disp(mfilename)
 
 %%
 % and its md5 hash is:
-Opt.Input = 'file';
-disp(hashlib.md5hash(strcat(mfilename,'.m'),Opt))
+disp(hashlib.md5hash(strcat(mfilename, '.m'), 'File'))
 
 
 %%
@@ -210,4 +209,4 @@ pdflib.showDependencyHash(mfilename);
 
 %%
 % This document was built in:
-disp(strcat(oval(t,3),' seconds.'))
+disp(strcat(strlib.oval(t,3),' seconds.'))
