@@ -4,7 +4,7 @@
 % to view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/.ts
 % NOTE: due to changes to mtools, this script is broken
 
-pHeader;
+pdflib.header;
 tic
 
 %% Introduction
