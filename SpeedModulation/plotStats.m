@@ -8,7 +8,8 @@ processed_data_filepath = fullfile(pathlib.strip(mfilename('fullpath'), 2), 'dat
 load(processed_data_filepath)
 
 % generate dummy BandwidthEstimator
-[best, root] = RatCatcher.extract(dataTable, 1);
+[best, root] = RatCatcher.extract(dataTable, 1, 'BandwidthEstimator', @(x) preprocess(x), true)
+
 
 %% Determining which Cells are Speed-Modulated
 % A cell is defined as speed-modulating when the Pearson's R correlation between the

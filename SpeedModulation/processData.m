@@ -33,7 +33,7 @@ catch
     corelib.textbar(ii, height(dataTable))
 
     % load the data
-    [best, root] = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', @(x) preprocess_fcn(x), true)
+    [best, root] = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', @(x) preprocess(x), true)
     speed{ii}     = root.svel; % spatially-scaled speed in cm/s
     best.kernel   = 'hanning';
 
@@ -94,8 +94,3 @@ catch
   save([processed_data_filepath], 'dataTable', 'speed', 'frequency');
   disp(['[INFO] bandwidth data saved in ''' processed_data_filepath ''''])
 end % try/catch
-
-function x = preprocess_fcn(x)
-  x = strrep(x, 'projectnb', 'mnt');
-  x = strrep(x, 'hoyland', 'ahoyland');
-end % function
