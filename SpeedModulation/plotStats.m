@@ -190,7 +190,7 @@ disp(mfilename)
 %%
 % and its md5 hash is:
 Opt.Input = 'file';
-disp(dataHash(strcat(mfilename,'.m'),Opt))
+disp(hashlib.md5hash(strcat(mfilename,'.m'),Opt))
 
 
 %%
@@ -205,7 +205,7 @@ t = toc;
 
 %%
 % This file has the following external dependencies:
-showDependencyHash(mfilename);
+pdflib.showDependencyHash(mfilename);
 
 
 %%
