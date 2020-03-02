@@ -122,7 +122,7 @@ figlib.pretty()
 box(gca, 'off')
 
 if being_published
-  snapnow
+  pdflib.snap()
   delete(gcf)
 end
 
@@ -142,7 +142,7 @@ figlib.pretty()
 box(gca, 'off')
 
 if being_published
-  snapnow
+  pdflib.snap()
   delete(gcf)
 end
 
