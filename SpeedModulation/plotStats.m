@@ -1,13 +1,17 @@
 % determine whether cells are speed modulated and visualize the data
 
+being_published = false;
+
 pdflib.header;
 tic;
 
-% load the data (alpha kernel)
-load('BandwidthEstimator-Caitlin-2.mat');
+% load the data (hanning kernel)
+processed_data_filepath = fullfile(pathlib.strip(mfilename('fullpath'), 2), 'data', 'data-Caitlin-BandwidthEstimator-processed.mat');
+load(processed_data_filepath)
 
 % generate dummy BandwidthEstimator
-[best, root] = RatCatcher.extract(dataTable, 1);
+[best, root] = RatCatcher.extract(dataTable, 1, 'BandwidthEstimator', @(x) preprocess(x), true)
+
 
 %% Determining which Cells are Speed-Modulated
 % A cell is defined as speed-modulating when the Pearson's R correlation between the
@@ -27,7 +31,7 @@ figlib.pretty()
 box(gca, 'off')
 
 if being_published
-  snapnow
+  pdflib.snap()
   delete(gcf)
 end
 
@@ -63,7 +67,7 @@ figlib.pretty()
 box(gca, 'off')
 
 if being_published
-  snapnow
+  pdflib.snap()
   delete(gcf)
 end
 
@@ -80,67 +84,73 @@ figlib.pretty()
 box(gca, 'off')
 
 if being_published
-  snapnow
+  pdflib.snap()
   delete(gcf)
 end
 
 %% Comparing Speed Modulation using Clustering
-
-% set up RatCatcher object
-r               = RatCatcher;
-r.experimenter  = 'Caitlin';
-r.analysis      = 'BandwidthEstimator';
-alphas          = {'A', 'B', 'C', 'D', 'E', 'F'};
-
-% store the indices mapping the clusters to the dataTable
-indices         = zeros(height(dataTable), length(alphas));
-
-for ii = 1:length(alphas)
-  r.alpha       = alphas{ii};
-  temp          = r.index(dataTable);
-  indices(temp, ii) = 1;
-end
-indices = logical(indices);
-
-% kmax between clusters
-for ii = 1:length(alphas)
-  data2plot(ii) = (1/best.Fs) * mean(dataTable.kmax(modulated & passing & indices(:, ii)));
-  err2plot(ii)  = (1/best.Fs) * std(dataTable.kmax(modulated & passing & indices(:, ii)));
-end
-
-figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-barwitherr(err2plot, data2plot);
-set(gca, 'XTickLabel', alphas)
-ylabel('k_{max} (s)')
-title('bandwidth parameter by cluster')
-
-figlib.pretty()
-box(gca, 'off')
-
-if being_published
-  snapnow
-  delete(gcf)
-end
-
-% meanFiringRate between clusters
-for ii = 1:length(alphas)
-  data2plot(ii) = (1/best.Fs) * mean(dataTable.kmax(modulated & linear & passing & indices(:, ii)));
-  err2plot(ii)  = (1/best.Fs) * std(dataTable.kmax(modulated & linear & passing & indices(:, ii)));
-end
-
-figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
-barwitherr(err2plot, data2plot);
-set(gca, 'XTickLabel', alphas)
-ylabel('mean firing rate (Hz)')
-title('mean firing rate by cluster')
-
-figlib.pretty()
-box(gca, 'off')
-
-if being_published
-  snapnow
-  delete(gcf)
-end
+%
+% % set up RatCatcher object
+% r               = RatCatcher;
+% conditions      = {'Caitlin', 'A'; ...
+%     'Caitlin', 'B'; ...
+%     'Caitlin', 'C'; ...
+%     'Caitlin', 'D'; ...
+%     'Caitlin', 'E'; ...
+%     'Caitlin', 'F'};
+% r.protocol      = 'BandwidthEstimator';
+%
+% % store the indices mapping the clusters to the dataTable
+% indices         = zeros(height(dataTable), length(conditions));
+%
+% for ii = 1:length(conditions)
+%   r.expID = conditions(ii, :);
+%   temp          = r.index(dataTable);
+%   indices(temp, ii) = 1;
+% end
+% indices = logical(indices);
+%
+% return
+%
+% % kmax between clusters
+% for ii = 1:length(alphas)
+%   data2plot(ii) = (1/best.Fs) * mean(dataTable.kmax(modulated & passing & indices(:, ii)));
+%   err2plot(ii)  = (1/best.Fs) * std(dataTable.kmax(modulated & passing & indices(:, ii)));
+% end
+%
+% figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+% barwitherr(err2plot, data2plot);
+% set(gca, 'XTickLabel', alphas)
+% ylabel('k_{max} (s)')
+% title('bandwidth parameter by cluster')
+%
+% figlib.pretty()
+% box(gca, 'off')
+%
+% if being_published
+%   pdflib.snap()
+%   delete(gcf)
+% end
+%
+% % meanFiringRate between clusters
+% for ii = 1:length(alphas)
+%   data2plot(ii) = (1/best.Fs) * mean(dataTable.kmax(modulated & linear & passing & indices(:, ii)));
+%   err2plot(ii)  = (1/best.Fs) * std(dataTable.kmax(modulated & linear & passing & indices(:, ii)));
+% end
+%
+% figure('OuterPosition',[0 0 1200 800],'PaperUnits','points','PaperSize',[1200 800]);
+% barwitherr(err2plot, data2plot);
+% set(gca, 'XTickLabel', alphas)
+% ylabel('mean firing rate (Hz)')
+% title('mean firing rate by cluster')
+%
+% figlib.pretty()
+% box(gca, 'off')
+%
+% if being_published
+%   pdflib.snap()
+%   delete(gcf)
+% end
 
 %% Bandwidth Estimation
 % The MLE/CV method computes the optimal bandwidth parameter using the Prerau & Eden method.
@@ -157,7 +167,7 @@ figlib.pretty()
 box(gca, 'off')
 
 if being_published
-  snapnow
+  pdflib.snap()
   delete(gcf)
 end
 
@@ -179,8 +189,7 @@ disp(mfilename)
 
 %%
 % and its md5 hash is:
-Opt.Input = 'file';
-disp(dataHash(strcat(mfilename,'.m'),Opt))
+disp(hashlib.md5hash(strcat(mfilename, '.m'), 'File'))
 
 
 %%
@@ -195,9 +204,9 @@ t = toc;
 
 %%
 % This file has the following external dependencies:
-showDependencyHash(mfilename);
+pdflib.showDependencyHash(mfilename);
 
 
 %%
 % This document was built in:
-disp(strcat(oval(t,3),' seconds.'))
+disp(strcat(strlib.oval(t,3),' seconds.'))
