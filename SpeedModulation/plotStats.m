@@ -1,5 +1,7 @@
 % determine whether cells are speed modulated and visualize the data
 
+being_published = false;
+
 pdflib.header;
 tic;
 
