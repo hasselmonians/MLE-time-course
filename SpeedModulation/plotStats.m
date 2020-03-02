@@ -3,8 +3,9 @@
 pdflib.header;
 tic;
 
-% load the data (alpha kernel)
-load('BandwidthEstimator-Caitlin-2.mat');
+% load the data (hanning kernel)
+processed_data_filepath = fullfile(pathlib.strip(mfilename('fullpath'), 2), 'data', 'data-Caitlin-BandwidthEstimator-processed.mat');
+load(processed_data_filepath)
 
 % generate dummy BandwidthEstimator
 [best, root] = RatCatcher.extract(dataTable, 1);
