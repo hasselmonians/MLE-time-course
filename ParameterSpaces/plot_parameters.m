@@ -18,9 +18,13 @@ isLinear = [dataTable.stats.p]' >= 0.05;
 % get the parameters from all modulated cells
 [params_linear, params_satexp] = getParameters(dataTable(isModulated & ~isLinear, :));
 
+% generate figures
+count = 0;
 for ii = 1:3 % over satexp parameters
     for qq = 1:2 % over linear parameters
-        figure;
+        count = count + 1;
+
+        h(count) = figure;
         scatter(params_linear(:, qq), params_satexp(:, ii), ...
             'MarkerEdgeColor', 'k', ...
             'MarkerFaceColor', 'k', ...
@@ -32,4 +36,12 @@ for ii = 1:3 % over satexp parameters
         axis square
         figlib.pretty('PlotBuffer', 0.1);
     end
+end
+
+% save figures
+for ii = 1:length(h)
+    save_path = fullfile(pathlib.strip(mfilename('fullpath'), 2), ...
+        'data', 'figures', ...
+        ['figure-parameters-satexp-' num2str(ii) '.fig']);
+    saveas(h(ii), save_path)
 end
