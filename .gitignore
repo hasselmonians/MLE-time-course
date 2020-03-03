@@ -113,8 +113,13 @@ venv.bak/
 *.pdf
 
 # anything in a cluster folder
-cluster/
-html/
+cluster/**
+
+# anything in an html folder
+html/**
+
+# anything in a data folder
+data/**
 
 # anything in a cache folder
 .cache/
