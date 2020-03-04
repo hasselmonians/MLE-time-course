@@ -13,9 +13,31 @@ isModulated = dataTable.kmax / fs < 30 & [dataTable.stats.R]' .^2 > 0.25;
 % determine which cells are linear
 isLinear = [dataTable.stats.p]' >= 0.05;
 
-%% Scatter plots of parameters
+%% 2-D plot of saturating exponential parameters
 
 % get the parameters from all modulated cells
+[~, params_satexp] = getParameters(dataTable(isModulated, :));
+
+for ii = 0:3
+    figure;
+    scatter(params_satexp(:, 2), params_satexp(:, 3), ...
+        'MarkerEdgeColor', 'k', ...
+        'MarkerFaceColor', 'k', ...
+        'MarkerEdgeAlpha', 0.2, ...
+        'MarkerFaceAlpha', 0.2);
+    xlabel('scaling parameter')
+    ylabel('exponential parameter')
+    ylim([-1, 2 * 10^ii])
+    title('b_2 and b_3 in satexp fits for all cells')
+    axis square
+    figlib.pretty('PlotBuffer', 0.2);
+end
+
+return
+
+%% Scatter plots of parameters
+
+% get the parameters from all modulated cells and nonlinear cells
 [params_linear, params_satexp] = getParameters(dataTable(isModulated & ~isLinear, :));
 
 % generate figures
