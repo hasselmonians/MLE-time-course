@@ -1,6 +1,6 @@
 % determine whether cells are speed modulated and visualize the data
 
-being_published = false;
+being_published = true;
 
 pdflib.header;
 tic;
@@ -10,7 +10,11 @@ processed_data_filepath = fullfile(pathlib.strip(mfilename('fullpath'), 2), 'dat
 load(processed_data_filepath)
 
 % generate dummy BandwidthEstimator
-[best, root] = RatCatcher.extract(dataTable, 1, 'BandwidthEstimator', @(x) preprocess(x), true)
+[best, root] = RatCatcher.extract(dataTable, ...
+	'Index', 1, ...
+	'Protocol', 'BandwidthEstimator', ...
+	'PreProcessFcn', @(x) preprocess(x), ...
+	'Verbosity', true);
 
 
 %% Determining which Cells are Speed-Modulated
