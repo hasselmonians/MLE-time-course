@@ -33,7 +33,10 @@ catch
     corelib.textbar(ii, height(dataTable))
 
     % load the data
-    [best, root] = RatCatcher.extract(dataTable, ii, 'BandwidthEstimator', @(x) preprocess(x), true)
+    [best, root] = RatCatcher.extract(dataTable, ...
+      'Protocol', 'BandwidthEstimator', ...
+      'Index', ii, ...
+      'PreProcessFcn',  @(x) preprocess(x), true);
     speed{ii}     = root.svel; % spatially-scaled speed in cm/s
     best.kernel   = 'hanning';
 
