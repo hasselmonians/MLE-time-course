@@ -1,4 +1,4 @@
-% process the data and save it in data-Caitlin-BandwidthEstimator-2
+% process the data and save it in data-Caitlin-BandwidthEstimator-processed
 
 % This scripts requires the following packages:
 %   * srinivas.gs_mtools
