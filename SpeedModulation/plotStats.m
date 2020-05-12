@@ -92,7 +92,7 @@ if being_published
   delete(gcf)
 end
 
-%% Comparing Speed Modulation using Clustering
+% %% Comparing Speed Modulation using Clustering
 %
 % % set up RatCatcher object
 % r               = RatCatcher;
@@ -113,8 +113,6 @@ end
 %   indices(temp, ii) = 1;
 % end
 % indices = logical(indices);
-%
-% return
 %
 % % kmax between clusters
 % for ii = 1:length(alphas)
