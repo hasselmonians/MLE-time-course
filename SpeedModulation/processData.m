@@ -21,12 +21,12 @@ catch
   disp('[INFO] bandwidth data couldn''t be loaded, computing instead')
 
   % containers
-  Pearson       = zeros(height(dataTable), 1);
-  delay         = zeros(height(dataTable), 1);
+  Pearson           = zeros(height(dataTable), 1);
+  delay             = zeros(height(dataTable), 1);
   delay_uncorrected = zeros(height(dataTable), 1);
-  meanFiringRate= zeros(height(dataTable), 1);
-  speed         = cell(height(dataTable), 1); % time series of animal speed
-  frequency     = cell(height(dataTable), 1); % time series of firing rate
+  meanFiringRate    = zeros(height(dataTable), 1);
+  speed             = cell(height(dataTable), 1); % time series of animal speed
+  frequency         = cell(height(dataTable), 1); % time series of firing rate
 
   % loop over all filename/filecode pairs
   for ii = 1:height(dataTable)
